@@ -24,10 +24,13 @@ func NewDb(path string) *Dao {
 	return &Dao{Engine: config.EngDb, c: config.NewConfig(path)}
 }
 
+//接口   结构体
+var _ DbHandler = Dao{}
+
 func (d Dao) Create(i interface{}) int {
-	switch i.(type) {
+	switch t := i.(type) {
 	case admin.Domain:
-		insert, err := d.Engine.Insert(i)
+		insert, err := d.Engine.Insert(t)
 		fmt.Println("create domain me", insert, err)
 		return e.Success
 	default:
@@ -58,9 +61,9 @@ func (d Dao) Update(i interface{}) int {
 
 func (d Dao) Find(i interface{}, pn, ps int) (interface{}, int) {
 
-	switch i.(type) {
+	switch t := i.(type) {
 	case admin.Domain:
-		d.FindDomain(i.(admin.Domain), pn, ps)
+		d.FindDomain(t, pn, ps)
 	default:
 		fmt.Println("update other ...")
 	}

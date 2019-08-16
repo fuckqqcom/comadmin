@@ -15,6 +15,8 @@ type Logic struct {
 	Db admin.DbHandler
 }
 
+var _ LogicHandler = Logic{}
+
 func NewLogic(path string) LogicHandler {
 	return &Logic{Db: admin.NewDb(path)}
 }
