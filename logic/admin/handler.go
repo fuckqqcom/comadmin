@@ -8,6 +8,7 @@ type LogicHandler interface {
 	Create(i interface{}) int
 	Delete(i interface{}) int
 	Update(i interface{}) int
+	FindById(id interface{}) int
 	Find(i interface{}, pn, ps int) (interface{}, int)
 }
 
@@ -33,4 +34,8 @@ func (l Logic) Update(i interface{}) int {
 
 func (l Logic) Find(i interface{}, pn, ps int) (interface{}, int) {
 	return l.Db.Find(i, pn, ps)
+}
+
+func (l Logic) FindById(id interface{}) int {
+	return l.Db.FindById(id)
 }

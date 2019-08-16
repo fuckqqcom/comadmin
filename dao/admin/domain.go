@@ -52,3 +52,11 @@ func (d Dao) update(domain admin.Domain) int {
 	}
 	return e.Errors
 }
+
+func (d Dao) findById(domain admin.Domain) int {
+	affect, err := d.Engine.Exist(domain)
+	if utils.CheckError(err, affect) && affect {
+		return e.Success
+	}
+	return e.ExistError
+}

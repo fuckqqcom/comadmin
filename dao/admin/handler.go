@@ -13,6 +13,7 @@ type DbHandler interface {
 	Delete(interface{}) int //删除
 	Update(interface{}) int //修改
 	Find(i interface{}, pn, ps int) (interface{}, int)
+	FindById(id interface{}) int
 } //查询
 
 type Dao struct {
@@ -68,4 +69,14 @@ func (d Dao) Find(i interface{}, pn, ps int) (interface{}, int) {
 		fmt.Println("update other ...")
 	}
 	return nil, 0
+}
+
+func (d Dao) FindById(i interface{}) int {
+	switch t := i.(type) {
+	case admin.Domain:
+		return d.findById(t)
+	default:
+		fmt.Println("update other ...")
+	}
+	return 0
 }
