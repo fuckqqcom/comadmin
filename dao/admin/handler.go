@@ -8,7 +8,7 @@ import (
 	"github.com/xormplus/xorm"
 )
 
-type DBHandler interface {
+type DbHandler interface {
 	Create(interface{}) int //创建
 	Delete(interface{}) int //删除
 	Update(interface{}) int //修改
@@ -19,7 +19,7 @@ type Dao struct {
 	Engine *xorm.Engine
 }
 
-func NewDB(path string) *Dao {
+func NewDb(path string) *Dao {
 	return &Dao{Engine: config.EngDb, c: config.NewConfig(path)}
 }
 

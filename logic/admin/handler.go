@@ -11,19 +11,19 @@ type LogicHandler interface {
 }
 
 type Logic struct {
-	DB admin.DBHandler
+	Db admin.DbHandler
 }
 
 func NewLogic(path string) LogicHandler {
-	return &Logic{DB: admin.NewDB(path)}
+	return &Logic{Db: admin.NewDb(path)}
 }
 func (l Logic) Create(i interface{}) int {
-	return l.DB.Create(i)
+	return l.Db.Create(i)
 }
 func (l Logic) Delete(i interface{}) int {
-	return l.DB.Delete(i)
+	return l.Db.Delete(i)
 }
 
 func (l Logic) Update(i interface{}) int {
-	return l.DB.Update(i)
+	return l.Db.Update(i)
 }

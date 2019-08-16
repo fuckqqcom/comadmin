@@ -7,7 +7,7 @@ import (
 )
 
 type Config struct {
-	DB struct {
+	Db struct {
 		Host    string
 		User    string
 		Pwd     string
@@ -34,18 +34,18 @@ func NewConfig(path string) (config Config) {
 	return
 }
 
-func NewDB() *xorm.Engine {
+func NewDb() *xorm.Engine {
 	return EngDb
 }
 
 func (c *Config) loadDb() {
-	fmt.Println(c.DB)
+	fmt.Println(c.Db)
 	var err error
 	dns := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		c.DB.User,
-		c.DB.Pwd,
-		c.DB.Host,
-		c.DB.Db)
+		c.Db.User,
+		c.Db.Pwd,
+		c.Db.Host,
+		c.Db.Db)
 
 	EngDb, err = xorm.NewEngine("mysql", dns)
 
@@ -53,8 +53,8 @@ func (c *Config) loadDb() {
 	if ping != nil || err != nil {
 		panic(ping)
 	}
-	EngDb.SetMaxIdleConns(c.DB.MaxIdle)
-	EngDb.SetMaxOpenConns(c.DB.MaxOpen)
-	EngDb.ShowSQL(c.DB.Show)
+	EngDb.SetMaxIdleConns(c.Db.MaxIdle)
+	EngDb.SetMaxOpenConns(c.Db.MaxOpen)
+	EngDb.ShowSQL(c.Db.Show)
 
 }
