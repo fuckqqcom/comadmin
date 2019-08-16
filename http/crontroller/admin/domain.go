@@ -22,9 +22,8 @@ func (h HttpHandler) CreateDomain(c app.GContext) {
 		code = e.ParamError
 		g.Json(http.StatusOK, code, "")
 		return
-
 	}
-	domain := admin.Domain{Name: p.Name, Id: utils.EncodeMd5(p.Name)}
+	domain := admin.Domain{Name: p.Name, Id: utils.EncodeMd5(p.Name), Status: 1}
 	code = h.logic.Create(domain)
 	g.Json(http.StatusOK, code, "")
 	return
@@ -81,6 +80,12 @@ func (h HttpHandler) UpdateDomain(c app.GContext) {
 	if p.Status != 0 {
 		domain.Status = p.Status
 	}
+
+	if p.Name == "" && p.Status == 0 {
+		code = e.ParamLose
+		g.Json(http.StatusOK, code, "")
+		return
+	}
 	code = h.logic.Update(domain)
 	g.Json(http.StatusOK, code, "")
 	return
@@ -93,7 +98,7 @@ id精确查询 name模糊查询,返回的都是一个数组
 func (h HttpHandler) FindDomainArgs(c app.GContext) {
 	g := app.G{c}
 	type P struct {
-		Id     string `json:"id" binding:"required"`
+		Id     string `json:"id"`
 		Name   string `json:"name"`
 		Status int    `json:"status"`
 		Pn     int    `json:"pn"`
@@ -109,11 +114,6 @@ func (h HttpHandler) FindDomainArgs(c app.GContext) {
 	}
 	domain := admin.Domain{Id: p.Id, Name: p.Name, Status: p.Status}
 
-	if domain.Name == "" && domain.Status == 0 {
-		code = e.ParamLose
-		g.Json(http.StatusOK, code, "")
-		return
-	}
 	list, count := h.logic.Find(domain, p.Pn, p.Ps)
 	m := make(map[string]interface{})
 	m["count"] = count

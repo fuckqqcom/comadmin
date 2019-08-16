@@ -42,7 +42,7 @@ func (d Dao) Create(i interface{}) int {
 func (d Dao) Delete(i interface{}) int {
 	switch t := i.(type) {
 	case admin.Domain:
-		d.delete(t)
+		return d.delete(t)
 	default:
 		fmt.Println("delete other ...")
 	}
@@ -52,7 +52,7 @@ func (d Dao) Delete(i interface{}) int {
 func (d Dao) Update(i interface{}) int {
 	switch t := i.(type) {
 	case admin.Domain:
-		d.update(t)
+		return d.update(t)
 	default:
 		fmt.Println("update other ...")
 	}
@@ -63,7 +63,7 @@ func (d Dao) Find(i interface{}, pn, ps int) (interface{}, int) {
 
 	switch t := i.(type) {
 	case admin.Domain:
-		d.findDomain(t, pn, ps)
+		return d.findDomain(t, pn, ps)
 	default:
 		fmt.Println("update other ...")
 	}

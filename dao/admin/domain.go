@@ -12,13 +12,13 @@ func (d Dao) findDomain(domain admin.Domain, pn, ps int) (interface{}, int) {
 		Name   string `json:"name"`
 		Id     string `json:"id"`
 		Status int    `json:"status"`
-		CTime  string `json:"ctime" xorm:"created"`
-		MTime  string `json:"mtime" xorm:"updated" `
+		Ctime  string `json:"ctime" `
+		Mtime  string `json:"mtime" `
 	}
 	ret := make([]Result, 0)
-	sql := "select * from domain where "
+	sql := "select id,`name`,status,ctime,mtime from domain where 1= 1  "
 	if domain.Name != "" {
-		sql += " name like %" + domain.Name + " % "
+		sql += "  and `name` like " + `"%` + domain.Name + `%" `
 	}
 	if domain.Status != 0 {
 		sql += fmt.Sprintf(" and status == %d ", domain.Status)
@@ -31,7 +31,7 @@ func (d Dao) findDomain(domain admin.Domain, pn, ps int) (interface{}, int) {
 }
 
 func (d Dao) delete(domain admin.Domain) int {
-	affect, err := d.Engine.Where("id = ? ", domain.Id).Delete(&domain)
+	affect, err := d.Engine.Where(" id = ? ", domain.Id).Delete(&domain)
 	if utils.CheckError(err, affect) {
 		return e.Success
 	}
@@ -46,7 +46,7 @@ func (d Dao) update(domain admin.Domain) int {
 	if domain.Status != 0 {
 		cols = append(cols, "status")
 	}
-	affect, err := d.Engine.Where("id = ", domain.Id).Cols(cols...).Update(&domain)
+	affect, err := d.Engine.Where(" id = ? ", domain.Id).Cols(cols...).Update(domain)
 	if utils.CheckError(err, affect) {
 		return e.Success
 	}

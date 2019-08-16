@@ -1,8 +1,8 @@
 package e
 
 var msgDict = map[int]string{
-	Success:      "操作成功",
-	Errors:       "操作失败",
+	Success:      "成功",
+	Errors:       "异常",
 	Forbid:       "您暂无权限",
 	Unauthorized: "认证失败，请重新登录",
 

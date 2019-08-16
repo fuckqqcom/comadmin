@@ -12,8 +12,9 @@ func NewRouter() *gin.Engine {
 	domain := r.r.Group("/domain")
 	{
 		domain.POST("/create", r.h.CreateDomain)
-		domain.GET("/delete", r.h.DeleteDoDomain)
+		domain.POST("/delete", r.h.DeleteDoDomain)
 		domain.POST("/find", r.h.FindDomainArgs)
+		domain.POST("/update", r.h.UpdateDomain)
 	}
 	return r.r
 }
