@@ -13,6 +13,7 @@ const (
 	DeleteError = 1002 //删除失败
 	FindError   = 1003 //查询失败
 	EmptyError  = 1004 //查询为空
-	ExistError  = 1005
-	ParamError  = 1006
+	ExistError  = 1005 //已经存在
+	ParamError  = 1006 //参数错误
+	ParamLose   = 1007 //参数丢失
 )

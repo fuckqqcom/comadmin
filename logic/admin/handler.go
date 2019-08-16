@@ -8,6 +8,7 @@ type LogicHandler interface {
 	Create(i interface{}) int
 	Delete(i interface{}) int
 	Update(i interface{}) int
+	Find(i interface{}, pn, ps int) (interface{}, int)
 }
 
 type Logic struct {
@@ -26,4 +27,8 @@ func (l Logic) Delete(i interface{}) int {
 
 func (l Logic) Update(i interface{}) int {
 	return l.Db.Update(i)
+}
+
+func (l Logic) Find(i interface{}, pn, ps int) (interface{}, int) {
+	return l.Db.Find(i, pn, ps)
 }

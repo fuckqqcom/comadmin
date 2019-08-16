@@ -12,7 +12,8 @@ type DbHandler interface {
 	Create(interface{}) int //创建
 	Delete(interface{}) int //删除
 	Update(interface{}) int //修改
-}
+	Find(i interface{}, pn, ps int) (interface{}, int)
+} //查询
 
 type Dao struct {
 	c      config.Config
@@ -53,4 +54,15 @@ func (d Dao) Update(i interface{}) int {
 		fmt.Println("update other ...")
 	}
 	return 0
+}
+
+func (d Dao) Find(i interface{}, pn, ps int) (interface{}, int) {
+
+	switch i.(type) {
+	case admin.Domain:
+		d.FindDomain(i.(admin.Domain), pn, ps)
+	default:
+		fmt.Println("update other ...")
+	}
+	return nil, 0
 }

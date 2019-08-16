@@ -13,6 +13,7 @@ var msgDict = map[int]string{
 	EmptyError:  "查询结果为空",
 	ExistError:  "已存在",
 	ParamError:  "参数错误",
+	ParamLose:   "缺少必要的参数",
 }
 
 func GetMsg(code int) string {

@@ -1,11 +1,11 @@
 package router
 
 import (
-	"comadmin/http/crontroller"
+	"comadmin/http/crontroller/admin"
 	"github.com/gin-gonic/gin"
 )
 
 type Engine struct {
 	r *gin.Engine
-	h *crontroller.HttpHandler
+	h *admin.HttpHandler
 }

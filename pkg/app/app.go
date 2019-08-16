@@ -17,4 +17,5 @@ func (g *G) Json(httpCode, code int, data interface{}) {
 	m["msg"] = e.GetMsg(code)
 	m["data"] = data
 	g.JSON(httpCode, m)
+	return
 }
