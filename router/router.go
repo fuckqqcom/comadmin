@@ -6,7 +6,7 @@ import (
 )
 
 func NewRouter() *gin.Engine {
-	r := &Engine{r: gin.New(), h: crontroller.NewHttpHandler()}
+	r := &Engine{r: gin.New(), h: crontroller.NewHttpHandler("config/config.json")}
 	r.r.Use(gin.Logger())
 	r.r.Use(gin.Recovery())
 	domain := r.r.Group("/domain")

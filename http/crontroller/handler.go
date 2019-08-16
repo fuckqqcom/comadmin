@@ -6,6 +6,6 @@ type HttpHandler struct {
 	logic admin.LogicHandler
 }
 
-func NewHttpHandler() *HttpHandler {
-	return &HttpHandler{logic: admin.NewLogic()}
+func NewHttpHandler(path string) *HttpHandler {
+	return &HttpHandler{logic: admin.NewLogic(path)}
 }

@@ -1,0 +1,17 @@
+{
+  "DB": {
+    "Host": "58.87.64.219",
+    "Port": 3306,
+    "User": "root",
+    "Pwd": "abc123456",
+    "Db": "wx",
+    "Show": true,
+    "MaxOpen": 256,
+    "MaxIdle": 150
+  },
+  "Redis": {
+    "Dns": "127.0.0.1:6379",
+    "MinIdle": 5,
+    "PoolSize": 200
+  }
+}

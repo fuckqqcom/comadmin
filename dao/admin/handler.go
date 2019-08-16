@@ -2,7 +2,10 @@ package admin
 
 import (
 	"comadmin/model/admin"
+	"comadmin/pkg/config"
+	"comadmin/pkg/e"
 	"fmt"
+	"github.com/xormplus/xorm"
 )
 
 type DBHandler interface {
@@ -12,17 +15,20 @@ type DBHandler interface {
 }
 
 type Dao struct {
-	Engine string
+	c      config.Config
+	Engine *xorm.Engine
 }
 
-func NewDB() *Dao {
-	return &Dao{Engine: "1"}
+func NewDB(path string) *Dao {
+	return &Dao{Engine: config.EngDb, c: config.NewConfig(path)}
 }
 
 func (d Dao) Create(i interface{}) int {
 	switch i.(type) {
 	case admin.Domain:
-		fmt.Println("create domain me")
+		insert, err := d.Engine.Insert(i)
+		fmt.Println("create domain me", insert, err)
+		return e.Success
 	default:
 		fmt.Println("create other ...")
 	}
