@@ -2,7 +2,6 @@ package admin
 
 import (
 	"comadmin/model/admin"
-	"comadmin/pkg/e"
 	"comadmin/tools/utils"
 	"fmt"
 )
@@ -30,33 +29,33 @@ func (d Dao) findDomain(domain admin.Domain, pn, ps int) (interface{}, int) {
 	return ret, int(count)
 }
 
-func (d Dao) delete(domain admin.Domain) int {
-	affect, err := d.Engine.Where(" id = ? ", domain.Id).Delete(&domain)
-	if utils.CheckError(err, affect) {
-		return e.Success
-	}
-	return e.Errors
-}
+//func (d Dao) deleteDomain(domain admin.Domain) int {
+//	affect, err := d.Engine.Where(" id = ? ", domain.Id).Delete(&domain)
+//	if utils.CheckError(err, affect) {
+//		return e.Success
+//	}
+//	return e.Errors
+//}
 
-func (d Dao) update(domain admin.Domain) int {
-	cols := make([]string, 0)
-	if domain.Name != "" {
-		cols = append(cols, "name")
-	}
-	if domain.Status != 0 {
-		cols = append(cols, "status")
-	}
-	affect, err := d.Engine.Where(" id = ? ", domain.Id).Cols(cols...).Update(domain)
-	if utils.CheckError(err, affect) {
-		return e.Success
-	}
-	return e.Errors
-}
+//func (d Dao) updateDomain(domain admin.Domain) int {
+//	cols := make([]string, 0)
+//	if domain.Name != "" {
+//		cols = append(cols, "name")
+//	}
+//	if domain.Status != 0 {
+//		cols = append(cols, "status")
+//	}
+//	affect, err := d.Engine.Where(" id = ? ", domain.Id).Cols(cols...).Update(domain)
+//	if utils.CheckError(err, affect) {
+//		return e.Success
+//	}
+//	return e.Errors
+//}
 
-func (d Dao) findById(domain admin.Domain) int {
-	affect, err := d.Engine.Exist(domain)
-	if utils.CheckError(err, affect) && affect {
-		return e.Success
-	}
-	return e.ExistError
-}
+//func (d Dao) findById(domain admin.Domain) int {
+//	affect, err := d.Engine.Exist(domain)
+//	if utils.CheckError(err, affect) && affect {
+//		return e.Success
+//	}
+//	return e.ExistError
+//}

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"crypto/md5"
 	"encoding/hex"
 	"log"
@@ -36,4 +37,12 @@ func SqlRegex(param string) bool {
 	}
 
 	return re.MatchString(param)
+}
+
+func StringJoin(a ...string) string {
+	var buf bytes.Buffer
+	for _, k := range a {
+		buf.WriteString(k)
+	}
+	return buf.String()
 }

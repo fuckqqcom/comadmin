@@ -73,12 +73,14 @@ func (h HttpHandler) UpdateDomain(c app.GContext) {
 		return
 	}
 	domain := admin.Domain{Id: p.Id}
-
+	cols := make([]string, 0)
 	if p.Name != "" {
 		domain.Name = p.Name
+		cols = append(cols, "name")
 	}
 	if p.Status != 0 {
 		domain.Status = p.Status
+		cols = append(cols, "status")
 	}
 
 	if p.Name == "" && p.Status == 0 {
@@ -86,7 +88,7 @@ func (h HttpHandler) UpdateDomain(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	code = h.logic.Update(domain)
+	code = h.logic.Update(domain, cols)
 	g.Json(http.StatusOK, code, "")
 	return
 }

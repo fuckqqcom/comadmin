@@ -6,6 +6,6 @@ import (
 )
 
 type Engine struct {
-	r *gin.Engine
-	h *admin.HttpHandler
+	*gin.Engine
+	*admin.HttpHandler
 }

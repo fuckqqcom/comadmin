@@ -5,11 +5,12 @@ import (
 )
 
 type LogicHandler interface {
-	Create(i interface{}) int
-	Delete(i interface{}) int
-	Update(i interface{}) int
-	FindById(id interface{}) int
-	Find(i interface{}, pn, ps int) (interface{}, int)
+	Login(interface{}) int
+	Create(interface{}) int
+	Delete(interface{}) int
+	Update(interface{}, []string) int
+	FindById(interface{}) int
+	Find(interface{}, int, int) (interface{}, int)
 }
 
 type Logic struct {
@@ -21,6 +22,10 @@ var _ LogicHandler = Logic{}
 func NewLogic(path string) LogicHandler {
 	return &Logic{Db: admin.NewDb(path)}
 }
+
+func (l Logic) Login(i interface{}) int {
+	l.Db.Login(i)
+}
 func (l Logic) Create(i interface{}) int {
 	return l.Db.Create(i)
 }
@@ -28,8 +33,8 @@ func (l Logic) Delete(i interface{}) int {
 	return l.Db.Delete(i)
 }
 
-func (l Logic) Update(i interface{}) int {
-	return l.Db.Update(i)
+func (l Logic) Update(i interface{}, cols []string) int {
+	return l.Db.Update(i, cols)
 }
 
 func (l Logic) Find(i interface{}, pn, ps int) (interface{}, int) {
