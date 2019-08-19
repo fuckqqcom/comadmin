@@ -9,7 +9,7 @@ func NewRouter() *gin.Engine {
 	r := &Engine{gin.New(), admin.NewAdminHttpHandler("config/config.json")}
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	domain := r.Group("/domain")
+	domain := r.Group("/v1/domain")
 	{
 		//域
 		domain.POST("/create", r.CreateDomain)
@@ -24,9 +24,9 @@ func NewRouter() *gin.Engine {
 	}
 
 	//用户操作
-	user := r.Group("/user")
-	user.POST("/create", r.Register) //用户注册
-	user.POST("/login", r.Login)     //用户登录
+	user := r.Group("/v1/user")
+	user.POST("/register", r.Register) //用户注册
+	user.POST("/login", r.Login)       //用户登录
 	{
 		user.POST("/createAdmin", r.RegisterAdminUser)
 		user.POST("/delete", r.DeleteUser)

@@ -3,6 +3,7 @@ package admin
 import (
 	"comadmin/model/admin"
 	"comadmin/pkg/config"
+	"comadmin/pkg/e"
 	"fmt"
 	"github.com/xormplus/xorm"
 )
@@ -34,12 +35,12 @@ func (d Dao) Login(i interface{}) int {
 
 func (d Dao) Create(i interface{}) int {
 	switch t := i.(type) {
-	case admin.Domain, admin.DomainApp:
+	case admin.Domain, admin.DomainApp, admin.User, admin.DomainAppUser:
 		return d.create(t)
 	default:
 		fmt.Println("create other ...")
+		return e.Errors
 	}
-	return 0
 }
 
 func (d Dao) Delete(i interface{}) int {
@@ -49,8 +50,8 @@ func (d Dao) Delete(i interface{}) int {
 		return d.delete(t.Id, t)
 	default:
 		fmt.Println("delete other ...")
+		return e.Errors
 	}
-	return 0
 }
 
 func (d Dao) Update(i interface{}, cols []string) int {
@@ -69,7 +70,7 @@ func (d Dao) Update(i interface{}, cols []string) int {
 
 	default:
 		fmt.Println("update other ...")
-		return 0
+		return e.Errors
 	}
 }
 
@@ -87,17 +88,18 @@ func (d Dao) Find(i interface{}, pn, ps int) (interface{}, int) {
 
 	default:
 		fmt.Println("update other ...")
+		return nil, e.Errors
 	}
-	return nil, 0
 }
 
 func (d Dao) FindById(i interface{}) int {
 	switch t := i.(type) {
-	case admin.Domain:
-	case admin.DomainApp:
+	case *admin.Domain:
+		return d.findById(t)
+	case *admin.DomainApp:
 		return d.findById(t)
 	default:
 		fmt.Println("update other ...")
+		return e.Errors
 	}
-	return 0
 }

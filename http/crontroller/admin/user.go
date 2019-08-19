@@ -27,11 +27,12 @@ func (h HttpHandler) Register(c app.GContext) {
 		return
 	}
 	//注册的时候校验did aid是否合法
-	domainApp := admin.DomainApp{Did: p.Did, Id: p.Aid}
+	domainApp := &admin.DomainApp{Did: p.Did, Id: p.Aid}
 	code = h.logic.FindById(domainApp)
 	if code != e.Success {
 		code = e.ParamError
 		g.Json(http.StatusOK, code, "分配id异常")
+		return
 	}
 	user := admin.User{Name: p.Name, Id: utils.EncodeMd5(utils.StringJoin(p.Name, p.Did, p.Aid)), Did: p.Did, Aid: p.Aid, Pwd: utils.EncodeMd5(p.Pwd), Status: 1}
 	appUser := admin.DomainAppUser{Id: utils.EncodeMd5(utils.StringJoin(p.Name, p.Did, p.Aid)), Did: p.Did, Aid: p.Aid, Uid: utils.EncodeMd5(utils.StringJoin(p.Name, p.Did, p.Aid)), Status: 1}

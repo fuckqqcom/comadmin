@@ -26,7 +26,7 @@ func (h HttpHandler) CreateDomainApp(c app.GContext) {
 		return
 	}
 
-	domain := admin.Domain{Id: p.Did}
+	domain := &admin.Domain{Id: p.Did}
 	code = h.logic.FindById(domain)
 	if code != e.Success {
 		g.Json(http.StatusOK, code, "")
