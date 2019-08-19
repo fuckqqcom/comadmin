@@ -2,6 +2,7 @@ package router
 
 import (
 	"comadmin/http/crontroller/admin"
+	"comadmin/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,6 +10,7 @@ func NewRouter() *gin.Engine {
 	r := &Engine{gin.New(), admin.NewAdminHttpHandler("config/config.json")}
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+	r.Use(middleware.JWT())
 	domain := r.Group("/v1/domain")
 	{
 		//域

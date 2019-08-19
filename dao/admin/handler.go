@@ -46,6 +46,7 @@ func (d Dao) Create(i interface{}) int {
 func (d Dao) Delete(i interface{}) int {
 	switch t := i.(type) {
 	case admin.Domain:
+		return d.delete(t.Id, t)
 	case admin.DomainApp:
 		return d.delete(t.Id, t)
 	default:
