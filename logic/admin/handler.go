@@ -24,7 +24,7 @@ func NewLogic(path string) LogicHandler {
 }
 
 func (l Logic) Login(i interface{}) int {
-	l.Db.Login(i)
+	return l.Db.Login(i)
 }
 func (l Logic) Create(i interface{}) int {
 	return l.Db.Create(i)

@@ -62,6 +62,11 @@ func (d Dao) Update(i interface{}, cols []string) int {
 		return d.update(t.Id, t, cols...)
 	case admin.User:
 		return d.update(t.Id, t, cols...)
+	case admin.Role:
+		return d.update(t.Id, t, cols...)
+	case admin.DomainAppRole:
+		return d.update(t.Id, t, cols...)
+
 	default:
 		fmt.Println("update other ...")
 		return 0
@@ -77,6 +82,9 @@ func (d Dao) Find(i interface{}, pn, ps int) (interface{}, int) {
 		return d.findApp(t, pn, ps)
 	case admin.User:
 		return d.findUser(t, pn, ps)
+	case admin.Role:
+		return d.findRole(t, pn, ps)
+
 	default:
 		fmt.Println("update other ...")
 	}

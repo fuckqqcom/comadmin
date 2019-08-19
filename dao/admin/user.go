@@ -40,7 +40,7 @@ func (d Dao) findUser(u admin.User, pn, ps int) (interface{}, int) {
 		sql += fmt.Sprintf(" and aid == '%s' ", u.Aid)
 	}
 
-	count, err := d.Engine.SQL(sql).Limit(ps, (pn-1)*ps).FindAndCount(&ret)
+	count, err := d.Engine.SQL(sql).OrderBy(" ctime desc ").Limit(ps, (pn-1)*ps).FindAndCount(&ret)
 	if !utils.CheckError(err, count) {
 		return nil, 0
 	}
