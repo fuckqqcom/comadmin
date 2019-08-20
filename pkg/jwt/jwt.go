@@ -3,12 +3,11 @@ package webtoken
 import (
 	"comadmin/pkg/e"
 	"github.com/dgrijalva/jwt-go"
-	"time"
 )
 
 type Claims struct {
 	Username string `json:"username"`
-	Id       int    `json:"id"`
+	Id       string `json:"id"`
 	IsAdmin  int    `json:"is_admin"`
 	IsRoot   int    `json:"is_root"`
 	jwt.StandardClaims
@@ -41,23 +40,8 @@ func ParseToken(token string) (*Claims, int) {
 	return nil, code
 }
 
-func GenerateToken(username string, id, isAdmin, isRoot int) (string, error) {
-	nowTime := time.Now()
-	expireTime := nowTime.Add(12 * time.Hour)
-
-	claims := Claims{
-		username,
-		id,
-		isAdmin,
-		isRoot,
-		jwt.StandardClaims{
-			ExpiresAt: expireTime.Unix(),
-			Issuer:    "gin",
-		},
-	}
-
+func GenerateToken(claims Claims) (string, error) {
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenClaims.SignedString(jwtSecret)
+	return tokenClaims.SignedString(jwtSecret)
 
-	return token, err
 }
