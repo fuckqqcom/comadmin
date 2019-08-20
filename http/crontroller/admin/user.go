@@ -4,8 +4,11 @@ import (
 	"comadmin/model/admin"
 	"comadmin/pkg/app"
 	"comadmin/pkg/e"
+	webtoken "comadmin/pkg/jwt"
 	"comadmin/tools/utils"
+	"github.com/dgrijalva/jwt-go"
 	"net/http"
+	"time"
 )
 
 //用户注册(对外暴露),不需要带token等信息
@@ -62,9 +65,35 @@ func (h HttpHandler) Login(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	user := admin.User{Name: p.Name, Id: utils.EncodeMd5(utils.StringJoin(p.Name, p.Did, p.Aid)), Did: p.Did, Aid: p.Aid, Pwd: utils.EncodeMd5(p.Pwd)}
+	user := &admin.User{Name: p.Name, Id: utils.EncodeMd5(utils.StringJoin(p.Name, p.Did, p.Aid)), Did: p.Did, Aid: p.Aid, Pwd: utils.EncodeMd5(p.Pwd)}
+	//这里做成可以配置的
+	const expire = 12
 	code = h.logic.Login(user)
-	g.Json(http.StatusOK, code, "")
+	m := make(map[string]interface{})
+	token := ""
+	var err error
+	if code == e.Success {
+		claims := webtoken.Claims{
+			Username: user.Name,
+			Id:       user.Id,
+			IsAdmin:  0,
+			IsRoot:   0,
+			StandardClaims: jwt.StandardClaims{
+				ExpiresAt: time.Now().Add(expire * time.Hour).Unix(),
+			},
+		}
+		token, err = webtoken.GenerateToken(claims)
+		if !utils.CheckError(err, token) {
+			code = e.TokenCreateError
+		}
+	}
+	//menu列表
+	m["token"] = token
+	m["userName"] = p.Name
+	m["uid"] = user.Id
+	//TODO 根据did  aid userId 获取用户的对应的角色权限列表
+	m["menu"] = ""
+	g.Json(http.StatusOK, code, m)
 	return
 }
 

@@ -30,7 +30,13 @@ func NewDb(path string) *Dao {
 var _ DbHandler = Dao{}
 
 func (d Dao) Login(i interface{}) int {
-	return d.login(i.(admin.User))
+
+	switch t := i.(type) {
+	case *admin.User:
+		return d.login(t)
+	default:
+		return e.Errors
+	}
 }
 
 func (d Dao) Create(i interface{}) int {
