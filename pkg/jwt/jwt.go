@@ -30,12 +30,14 @@ func ParseToken(token string) (*Claims, int) {
 	}
 
 	if err != nil {
-		switch err.(*jwt.ValidationError).Errors {
-		case jwt.ValidationErrorExpired:
-			code = e.Unauthorized
-		default:
-			code = e.Unauthorized
-		}
+		//switch err.(*jwt.ValidationError).Errors {
+		//case jwt.ValidationErrorExpired:
+		//	code = e.Unauthorized
+		//default:
+		//	code = e.Unauthorized
+		//}
+
+		code = e.Unauthorized
 	}
 
 	return nil, code
