@@ -48,8 +48,8 @@ func (d Dao) findUser(u admin.User, pn, ps int) (interface{}, int) {
 }
 
 //登录接口
-func (d Dao) login(u admin.User) int {
-	affect, err := d.Engine.Get(u)
+func (d Dao) login(bean interface{}) int {
+	affect, err := d.Engine.Get(bean)
 	if utils.CheckError(err, affect) && affect {
 		return e.Success
 	}

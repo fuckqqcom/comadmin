@@ -2,10 +2,11 @@ package e
 
 const (
 	//通用编码
-	Success      = 200
-	Errors       = 500
-	Forbid       = 403
-	Unauthorized = 401
+	Success          = 200
+	Errors           = 500
+	Forbid           = 403
+	Unauthorized     = 401
+	TokenCreateError = 2000
 
 	//业务编码
 	AddError      = 1000 //添加失败
