@@ -2,12 +2,14 @@ package router
 
 import (
 	"comadmin/http/crontroller/admin"
+	"comadmin/http/crontroller/wx"
 	"comadmin/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func NewRouter() *gin.Engine {
-	r := &Engine{gin.New(), admin.NewAdminHttpHandler("config/config.json")}
+	path := "config/config.json"
+	r := &Engine{gin.New(), admin.NewAdminHttpAdminHandler(path), wx.NewWxHttpAdminHandler(path)}
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(middleware.JWT())
@@ -36,6 +38,16 @@ func NewRouter() *gin.Engine {
 		user.POST("/updatePhone", r.UpdateUserPhone)
 		user.POST("/updatePwd", r.UpdateUserPwd)
 		user.POST("/forbidUser", r.UpdateUserStatus)
+	}
+
+	weiXin := r.Group("/wx")
+	{
+		//获取所有biz和name信息
+		weiXin.GET("/biz", r.FindBiz)
+		//获取点赞等接口
+		weiXin.GET("/api", r.FindApi)
+		//提交点赞和阅读量数据接口
+		weiXin.POST("/post", r.PostData)
 	}
 	return r.Engine
 }

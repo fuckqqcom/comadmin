@@ -12,7 +12,7 @@ import (
 /**
 创建应用app
 */
-func (h HttpHandler) CreateDomainApp(c app.GContext) {
+func (h HttpAdminHandler) CreateDomainApp(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Name string `json:"name"  binding:"required"`
@@ -42,7 +42,7 @@ func (h HttpHandler) CreateDomainApp(c app.GContext) {
 更新应用app(主要是更新名字)
 */
 
-func (h HttpHandler) UpdateDomainApp(c app.GContext) {
+func (h HttpAdminHandler) UpdateDomainApp(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Name   string `json:"name"`
@@ -74,7 +74,7 @@ func (h HttpHandler) UpdateDomainApp(c app.GContext) {
 	return
 }
 
-func (h HttpHandler) DeleteDomainApp(c app.GContext) {
+func (h HttpAdminHandler) DeleteDomainApp(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id string `json:"id"  binding:"required"`
@@ -97,7 +97,7 @@ func (h HttpHandler) DeleteDomainApp(c app.GContext) {
   查找，只能查找自己当前did下面的app
 	比如 当前用户操作(属于这个域的管理员),选择列表的时候出现app列表
 */
-func (h HttpHandler) FindDomainApp(c app.GContext) {
+func (h HttpAdminHandler) FindDomainApp(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id     string `json:"id"`

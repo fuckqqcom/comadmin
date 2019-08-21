@@ -2,10 +2,10 @@ package admin
 
 import "comadmin/logic/admin"
 
-type HttpHandler struct {
+type HttpAdminHandler struct {
 	logic admin.LogicHandler
 }
 
-func NewAdminHttpHandler(path string) *HttpHandler {
-	return &HttpHandler{logic: admin.NewLogic(path)}
+func NewAdminHttpAdminHandler(path string) *HttpAdminHandler {
+	return &HttpAdminHandler{logic: admin.NewLogic(path)}
 }

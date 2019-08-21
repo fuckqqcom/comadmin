@@ -2,6 +2,7 @@ package webtoken
 
 import (
 	"comadmin/pkg/e"
+	"comadmin/tools/utils"
 	"github.com/dgrijalva/jwt-go"
 	"time"
 )
@@ -28,15 +29,7 @@ func ParseToken(token string) (*Claims, int) {
 			return claims, code
 		}
 	}
-
-	if err != nil {
-		//switch err.(*jwt.ValidationError).Errors {
-		//case jwt.ValidationErrorExpired:
-		//	code = e.Unauthorized
-		//default:
-		//	code = e.Unauthorized
-		//}
-
+	if utils.CheckError(err, err.(*jwt.ValidationError).Errors) {
 		code = e.Unauthorized
 	}
 

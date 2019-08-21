@@ -11,7 +11,7 @@ import (
 /**
 创建domain
 */
-func (h HttpHandler) CreateDomain(c app.GContext) {
+func (h HttpAdminHandler) CreateDomain(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Name string `json:"name"  binding:"required"`
@@ -32,7 +32,7 @@ func (h HttpHandler) CreateDomain(c app.GContext) {
 /**
 通过id去删除domain
 */
-func (h HttpHandler) DeleteDoDomain(c app.GContext) {
+func (h HttpAdminHandler) DeleteDoDomain(c app.GContext) {
 	g := app.G{c}
 
 	type P struct {
@@ -57,7 +57,7 @@ func (h HttpHandler) DeleteDoDomain(c app.GContext) {
 通过id更新数据
 */
 
-func (h HttpHandler) UpdateDomain(c app.GContext) {
+func (h HttpAdminHandler) UpdateDomain(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id     string `json:"id" binding:"required"`
@@ -97,7 +97,7 @@ func (h HttpHandler) UpdateDomain(c app.GContext) {
 不管是通过id还是name查询
 id精确查询 name模糊查询,返回的都是一个数组
 */
-func (h HttpHandler) FindDomainArgs(c app.GContext) {
+func (h HttpAdminHandler) FindDomainArgs(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id     string `json:"id"`

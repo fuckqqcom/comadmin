@@ -9,7 +9,7 @@ import (
 )
 
 //用户注册(对外暴露),不需要带token等信息
-func (h HttpHandler) Register(c app.GContext) {
+func (h HttpAdminHandler) Register(c app.GContext) {
 	type P struct {
 		Name string `json:"name"  binding:"required"`
 		Pwd  string `json:"pwd"  binding:"required" `
@@ -45,7 +45,7 @@ func (h HttpHandler) Register(c app.GContext) {
 }
 
 //登录的时候需要判断did和app id是否存在
-func (h HttpHandler) Login(c app.GContext) {
+func (h HttpAdminHandler) Login(c app.GContext) {
 	type P struct {
 		Name string `json:"name"  binding:"required"`
 		Pwd  string `json:"pwd"  binding:"required" `
@@ -69,7 +69,7 @@ func (h HttpHandler) Login(c app.GContext) {
 }
 
 //admin手动添加用户
-func (h HttpHandler) RegisterAdminUser(c app.GContext) {
+func (h HttpAdminHandler) RegisterAdminUser(c app.GContext) {
 	type P struct {
 		Name string `json:"name"  binding:"required"`
 		Pwd  string `json:"pwd"  binding:"required" `
@@ -99,7 +99,7 @@ func (h HttpHandler) RegisterAdminUser(c app.GContext) {
 }
 
 //删除用户
-func (h HttpHandler) DeleteUser(c app.GContext) {
+func (h HttpAdminHandler) DeleteUser(c app.GContext) {
 	g := app.G{c}
 
 	type P struct {
@@ -126,7 +126,7 @@ func (h HttpHandler) DeleteUser(c app.GContext) {
 //更新头像 分开写
 //禁用用户登录
 
-func (h HttpHandler) UpdateUserPhone(c app.GContext) {
+func (h HttpAdminHandler) UpdateUserPhone(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id    string `json:"id" binding:"required"`
@@ -149,7 +149,7 @@ func (h HttpHandler) UpdateUserPhone(c app.GContext) {
 }
 
 //更新密码
-func (h HttpHandler) UpdateUserPwd(c app.GContext) {
+func (h HttpAdminHandler) UpdateUserPwd(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id  string `json:"id" binding:"required"`
@@ -173,7 +173,7 @@ func (h HttpHandler) UpdateUserPwd(c app.GContext) {
 
 //禁用账户
 
-func (h HttpHandler) UpdateUserStatus(c app.GContext) {
+func (h HttpAdminHandler) UpdateUserStatus(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id     string `json:"id" binding:"required"`
@@ -198,7 +198,7 @@ func (h HttpHandler) UpdateUserStatus(c app.GContext) {
 查询用户
 */
 
-func (h HttpHandler) FindUser(c app.GContext) {
+func (h HttpAdminHandler) FindUser(c app.GContext) {
 	g := app.G{c}
 
 	var p admin.UserParams

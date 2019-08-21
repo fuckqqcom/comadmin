@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func (h HttpHandler) CreateRole(c app.GContext) {
+func (h HttpAdminHandler) CreateRole(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Name string `json:"name"  binding:"required"`
@@ -41,7 +41,7 @@ func (h HttpHandler) CreateRole(c app.GContext) {
 	return
 }
 
-func (h HttpHandler) DeleteRole(c app.GContext) {
+func (h HttpAdminHandler) DeleteRole(c app.GContext) {
 	g := app.G{c}
 
 	type P struct {
@@ -67,7 +67,7 @@ func (h HttpHandler) DeleteRole(c app.GContext) {
 }
 
 //只更新角色名称
-func (h HttpHandler) UpdateRole(c app.GContext) {
+func (h HttpAdminHandler) UpdateRole(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Name string `json:"name"  binding:"required"`
@@ -90,7 +90,7 @@ func (h HttpHandler) UpdateRole(c app.GContext) {
 }
 
 //禁用角色
-func (h HttpHandler) ForbidRole(c app.GContext) {
+func (h HttpAdminHandler) ForbidRole(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id     string `json:"id" binding:"required"`
@@ -115,7 +115,7 @@ func (h HttpHandler) ForbidRole(c app.GContext) {
 	return
 }
 
-func (h HttpHandler) FindRole(c app.GContext) {
+func (h HttpAdminHandler) FindRole(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id     string `json:"id"`
