@@ -3,7 +3,6 @@ package router
 import (
 	"comadmin/http/crontroller/admin"
 	"comadmin/http/crontroller/wx"
-	"comadmin/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,7 +11,7 @@ func NewRouter() *gin.Engine {
 	r := &Engine{gin.New(), admin.NewAdminHttpAdminHandler(path), wx.NewWxHttpAdminHandler(path)}
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	r.Use(middleware.JWT())
+	//r.Use(middleware.JWT())
 	domain := r.Group("/v1/domain")
 	{
 		//域
