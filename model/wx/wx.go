@@ -20,7 +20,7 @@ type WeiXinCount struct {
 	ThumbCount int    `json:"thumb_count"` //点赞数
 }
 
-type API struct {
+type Api struct {
 	Id       string `json:"id"`
 	Name     string `json:"name"`
 	Url      string `json:"url"`

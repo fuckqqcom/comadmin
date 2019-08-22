@@ -22,7 +22,7 @@ func (d Dao) findBizList() (interface{}, int) {
 
 func (d Dao) findApi() (interface{}, int) {
 
-	wx := make([]wx2.API, 0)
+	wx := make([]wx2.Api, 0)
 
 	count, err := d.Engine.FindAndCount(&wx)
 	if utils.CheckError(err, count) {
