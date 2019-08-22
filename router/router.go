@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter() *gin.Engine {
-	path := "config/config.json"
+func NewRouter(path string) *gin.Engine {
+
 	r := &Engine{gin.New(), admin.NewAdminHttpAdminHandler(path), wx.NewWxHttpAdminHandler(path)}
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
