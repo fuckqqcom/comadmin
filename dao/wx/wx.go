@@ -6,12 +6,12 @@ import (
 )
 
 func (d Dao) findBizList() (interface{}, int) {
-	type Wx struct {
+	type WeiXin struct {
 		Biz  string `json:"biz"`
 		Name string `json:"name"`
 	}
 
-	wx := make([]Wx, 0)
+	wx := make([]WeiXin, 0)
 
 	count, err := d.Engine.FindAndCount(&wx)
 	if utils.CheckError(err, count) {
