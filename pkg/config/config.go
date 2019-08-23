@@ -26,7 +26,7 @@ type Config struct {
 		PoolSize int
 		Db       int
 	}
-	es struct {
+	Es struct {
 		Host string
 	}
 }
@@ -84,8 +84,8 @@ func (c *Config) LoadRedis() {
 
 func (c *Config) LoadElastic() {
 	var err error
-
-	EsClient, err = elastic.NewClient(elastic.SetURL(c.es.Host))
+	fmt.Println("es --->", c.Es.Host)
+	EsClient, err = elastic.NewSimpleClient(elastic.SetURL(c.Es.Host))
 	if err != nil {
 		log.Printf("elastic conn is error %s", err)
 	}

@@ -11,7 +11,7 @@ import (
 
 //删除 通过id删除
 func (d Dao) delete(id, bean interface{}) int {
-	affect, err := d.Engine.Where(" id = ? ", id).Delete(&bean)
+	affect, err := d.engine.Where(" id = ? ", id).Delete(&bean)
 	if utils.CheckError(err, affect) {
 		return e.Success
 	}
@@ -20,7 +20,7 @@ func (d Dao) delete(id, bean interface{}) int {
 
 //创建
 func (d Dao) create(bean interface{}) int {
-	affect, err := d.Engine.Insert(bean)
+	affect, err := d.engine.Insert(bean)
 	if utils.CheckError(err, affect) {
 		return e.Success
 	}
@@ -30,7 +30,7 @@ func (d Dao) create(bean interface{}) int {
 //通过id查找
 
 func (d Dao) findById(bean interface{}) int {
-	affect, err := d.Engine.Exist(bean)
+	affect, err := d.engine.Exist(bean)
 	if utils.CheckError(err, affect) && affect {
 		return e.Success
 	}
@@ -43,7 +43,7 @@ func (d Dao) findById(bean interface{}) int {
 
 func (d Dao) update(id interface{}, bean interface{}, cols ...string) int {
 
-	affect, err := d.Engine.Where(" id = ? ", id).Cols(cols...).Update(bean)
+	affect, err := d.engine.Where(" id = ? ", id).Cols(cols...).Update(bean)
 	if utils.CheckError(err, affect) {
 		return e.Success
 	}

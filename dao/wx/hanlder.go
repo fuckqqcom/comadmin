@@ -5,7 +5,7 @@ import (
 	"comadmin/pkg/config"
 	"comadmin/pkg/e"
 	"fmt"
-	"github.com/elastic/go-elasticsearch/v6"
+	"github.com/olivere/elastic/v7"
 	"github.com/xormplus/xorm"
 )
 
@@ -18,12 +18,12 @@ type DbHandler interface {
 
 type Dao struct {
 	c      config.Config
-	Engine *xorm.Engine
-	es     *elasticsearch.Client
+	engine *xorm.Engine
+	es     *elastic.Client
 }
 
 func NewDb(path string) *Dao {
-	return &Dao{Engine: config.EngDb, c: config.NewConfig(path)}
+	return &Dao{engine: config.EngDb, c: config.NewConfig(path)}
 }
 
 //接口   结构体

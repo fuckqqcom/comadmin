@@ -3,6 +3,7 @@ package wx
 import (
 	wx2 "comadmin/model/wx"
 	"comadmin/tools/utils"
+	"context"
 )
 
 func (d Dao) findBizList() (interface{}, int) {
@@ -13,7 +14,7 @@ func (d Dao) findBizList() (interface{}, int) {
 
 	wx := make([]WeiXin, 0)
 
-	count, err := d.Engine.FindAndCount(&wx)
+	count, err := d.engine.FindAndCount(&wx)
 	if utils.CheckError(err, count) {
 		return wx, int(count)
 	}
@@ -24,7 +25,7 @@ func (d Dao) findApi() (interface{}, int) {
 
 	wx := make([]wx2.Api, 0)
 
-	count, err := d.Engine.FindAndCount(&wx)
+	count, err := d.engine.FindAndCount(&wx)
 	if utils.CheckError(err, count) {
 		return wx, int(count)
 	}
@@ -32,5 +33,8 @@ func (d Dao) findApi() (interface{}, int) {
 }
 
 func (d Dao) insertDetail() {
-	d.es.Create()
+	type A struct {
+		Name string `json:"name"`
+	}
+	d.es.Index().Index("xxx").OpType("xx").Id("1").BodyJson("xx").Do(context.Background())
 }
