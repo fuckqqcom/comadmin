@@ -34,6 +34,8 @@ func (d Dao) Create(i interface{}) int {
 	switch t := i.(type) {
 	case wx.WeiXin:
 		return d.create(t)
+	case wx.WeiXinDetail:
+		return d.insertDetail(t.ArticleId, t)
 	default:
 		fmt.Println("create other ...")
 		return e.Errors

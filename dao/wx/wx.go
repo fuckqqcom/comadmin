@@ -4,6 +4,7 @@ import (
 	wx2 "comadmin/model/wx"
 	"comadmin/tools/utils"
 	"context"
+	"encoding/json"
 )
 
 func (d Dao) findBizList() (interface{}, int) {
@@ -32,9 +33,18 @@ func (d Dao) findApi() (interface{}, int) {
 	return nil, 0
 }
 
-func (d Dao) insertDetail() {
+func (d Dao) insertDetail(id string, bean interface{}) int {
+	data := ""
+	marshal, err := json.Marshal(bean)
+	if err != nil {
+		data = string(marshal)
+	}
 	type A struct {
 		Name string `json:"name"`
 	}
-	d.es.Index().Index("xxx").OpType("xx").Id("1").BodyJson("xx").Do(context.Background())
+	do, err := d.es.Index().Index("xxx").OpType("xx").Id(id).BodyString(data).Do(context.Background())
+	if utils.CheckError(err, do) {
+
+	}
+	return 0
 }
