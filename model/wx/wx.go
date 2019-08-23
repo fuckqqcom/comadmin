@@ -26,3 +26,21 @@ type Api struct {
 	Url      string `json:"url"`
 	Category int    `json:"category"` // 1是阅读点赞接口  2是详情接口 3是其他接口等
 }
+
+//微信详情数据(es)
+type WeiXinDetail struct {
+	ArticleId string    `json:"id"`   //主键id
+	Text      string    `json:"text"` //正文
+	Ctime     time.Time `json:"ctime"`
+	Mtime     time.Time `json:"mtime"`
+}
+
+//微信列表数据(mysql)
+type WeiXinList struct {
+	ArticleId string    `json:"id"`
+	Biz       string    `json:"biz"`
+	Url       string    `json:"url"`
+	Title     string    `json:"title"`
+	Ctime     time.Time `json:"ctime"`
+	Mtime     time.Time `json:"mtime"`
+}

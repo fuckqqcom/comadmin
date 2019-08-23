@@ -30,3 +30,7 @@ func (d Dao) findApi() (interface{}, int) {
 	}
 	return nil, 0
 }
+
+func (d Dao) insertDetail() {
+	d.es.Create()
+}

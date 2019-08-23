@@ -1,16 +1,12 @@
 package config
 
 import (
-	"crypto/tls"
 	"fmt"
-	"github.com/elastic/go-elasticsearch/v6"
 	"github.com/go-redis/redis"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/olivere/elastic/v7"
 	"github.com/xormplus/xorm"
 	"log"
-	"net"
-	"net/http"
-	"time"
 )
 
 type Config struct {
@@ -30,7 +26,7 @@ type Config struct {
 		PoolSize int
 		Db       int
 	}
-	Es struct {
+	es struct {
 		Host string
 	}
 }
@@ -38,7 +34,7 @@ type Config struct {
 var (
 	EngDb       *xorm.Engine
 	RedisClient *redis.Client
-	EsClient    *elasticsearch.Client
+	EsClient    *elastic.Client
 )
 
 func NewConfig(path string) (config Config) {
@@ -87,20 +83,25 @@ func (c *Config) LoadRedis() {
 }
 
 func (c *Config) LoadElastic() {
-	info := elasticsearch.Config{
-		Addresses: []string{"http://47.94.238.24:9200"},
-		Transport: &http.Transport{
-			MaxIdleConnsPerHost:   10,
-			ResponseHeaderTimeout: 500 * time.Millisecond,
-			DialContext:           (&net.Dialer{Timeout: 2 * time.Second}).DialContext,
-			TLSClientConfig: &tls.Config{
-				MinVersion: tls.VersionTLS11,
-				// ...
-			},
-		},
-	}
 	var err error
-	if EsClient, err = elasticsearch.NewClient(info); err != nil {
-		log.Printf("elastic conn is error %v", err)
+
+	EsClient, err = elastic.NewClient(elastic.SetURL(c.es.Host))
+	if err != nil {
+		log.Printf("elastic conn is error %s", err)
 	}
+	//info := elasticsearch.Config{
+	//	Addresses: []string{""},
+	//	Transport: &http.Transport{
+	//		MaxIdleConnsPerHost:   10,
+	//		ResponseHeaderTimeout: 500 * time.Millisecond,
+	//		DialContext:           (&net.Dialer{Timeout: 2 * time.Second}).DialContext,
+	//		TLSClientConfig: &tls.Config{
+	//			MinVersion: tls.VersionTLS11,
+	//			// ...
+	//		},
+	//	},
+	//}
+	//if EsClient, err = elasticsearch.NewClient(info); err != nil {
+	//	log.Printf("elastic conn is error %v", err)
+	//}
 }
