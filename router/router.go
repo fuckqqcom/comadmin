@@ -47,6 +47,8 @@ func NewRouter(path string) *gin.Engine {
 		weiXin.GET("/api", r.FindApi)
 		//提交点赞和阅读量数据接口
 		weiXin.POST("/post", r.PostData)
+		//查询数据接口
+		weiXin.POST("/find", r.FindDetail)
 	}
 	return r.Engine
 }

@@ -53,3 +53,22 @@ func (h HttpWxHandler) PostData(c app.GContext) {
 	g.Json(http.StatusOK, code, "")
 	return
 }
+
+func (h HttpWxHandler) FindDetail(c app.GContext) {
+	g := app.G{c}
+
+	var p wx.WeiXinParams
+	code := e.Success
+	if !utils.CheckError(c.ShouldBindJSON(&p), "updateDomain") {
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+
+	list, count := h.logic.Find(p, p.Pn, p.Ps)
+	m := make(map[string]interface{})
+	m["count"] = count
+	m["list"] = list
+	g.Json(http.StatusOK, code, m)
+	return
+}

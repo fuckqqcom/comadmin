@@ -17,7 +17,6 @@ func main() {
 	config.EngDb.Sync2(new(wx.WeiXin))
 	config.EngDb.Sync2(new(wx.Api))
 	config.EngDb.Sync2(new(wx.WeiXinCount))
-	config.EngDb.Sync2(new(wx.WeiXinList))
 
 	//角色相关
 	//config.EngDb.Sync2(new(admin.Role))

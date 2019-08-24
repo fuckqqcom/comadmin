@@ -1,4 +1,4 @@
-package wx
+package wxd
 
 import (
 	"comadmin/pkg/e"

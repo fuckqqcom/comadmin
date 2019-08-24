@@ -1,4 +1,4 @@
-package wx
+package wxd
 
 import (
 	"comadmin/model/wx"
@@ -14,6 +14,7 @@ type DbHandler interface {
 	FindBiz() (interface{}, int) //获取公号信息
 	FindApi() (interface{}, int) //获取接口
 	PostData(interface{}) int    //提交数据接口
+	Find(i interface{}, pn, ps int) (interface{}, interface{})
 } //查询
 
 type Dao struct {
@@ -35,7 +36,7 @@ func (d Dao) Create(i interface{}) int {
 	case wx.WeiXin:
 		return d.create(t)
 	case wx.WeiXinDetail:
-		return d.insertDetail(t.ArticleId, t)
+		return d.insertArticleDetail(t.ArticleId, t)
 	default:
 		fmt.Println("create other ...")
 		return e.Errors
@@ -57,5 +58,17 @@ func (d Dao) PostData(i interface{}) int {
 	default:
 		fmt.Println("create other ...")
 		return e.Errors
+	}
+}
+
+func (d Dao) Find(i interface{}, pn, ps int) (interface{}, interface{}) {
+
+	switch t := i.(type) {
+	case wx.WeiXinParams:
+		return d.findArticle(t, pn, ps)
+
+	default:
+		fmt.Println("update other ...")
+		return nil, e.Errors
 	}
 }
