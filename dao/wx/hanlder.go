@@ -23,8 +23,13 @@ type Dao struct {
 	es     *elastic.Client
 }
 
+var (
+	index = config.EsIndex
+	tp    = config.EsType
+)
+
 func NewDb(path string) *Dao {
-	return &Dao{engine: config.EngDb, c: config.NewConfig(path)}
+	return &Dao{engine: config.EngDb, es: config.EsClient, c: config.NewConfig(path)}
 }
 
 //接口   结构体
@@ -36,7 +41,7 @@ func (d Dao) Create(i interface{}) int {
 	case wx.WeiXin:
 		return d.create(t)
 	case wx.WeiXinDetail:
-		return d.insertArticleDetail(t.ArticleId, t)
+		return d.insertArticleDetail(t.Id, t)
 	default:
 		fmt.Println("create other ...")
 		return e.Errors

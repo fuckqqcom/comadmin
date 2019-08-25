@@ -3,3 +3,60 @@
 TODO
 中间件中加入防止sql注入的功能
 是否可以在初始化的结构体中指定goroutine的数量,然后利用channel通信
+
+
+
+接口文档
+    url:http://58.87.64.219/
+    code:200表示成功   其他的表示异常
+
+
+一:获取公号信息和biz信息接口:
+    uri:wx/biz
+    method:get
+    params:无
+    返回值:
+        {
+          "code": 200,
+          "data": {
+            "count": 1,
+            "list": [
+              {
+                "biz": "MjM5OTcxMzE0MQ==",
+                "name": "Go中国"
+              }
+            ]
+          },
+          "msg": "成功"
+        }
+
+二:获取点赞和阅读量接口:
+    uri:wx/api
+    method:get
+    params:无
+    返回值:
+        {
+          "code": 200,
+          "data": {
+            "count": 0,
+            "list": [
+                {"name":"点赞","url":"xxx","category":1}  //1是阅读点赞接口  2是详情接口 3是其他接口等
+            ]
+          },
+          "msg": "成功"
+        }
+
+
+三:提交阅读数和点赞数接口
+    uri:wx/post
+    method:post
+    params:{"biz":"","article_id":"11","read_count":1,"thumb_count":1}
+    read_count:阅读数 类型:int
+    thumb_count:点赞数:类型  int
+
+    返回值:
+    {
+        "code":"",
+        "msg":"",
+        "data":""
+    }

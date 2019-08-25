@@ -2,6 +2,7 @@ package wxd
 
 import (
 	"comadmin/model/wx"
+	"comadmin/pkg/config"
 	"comadmin/pkg/e"
 	"comadmin/tools/utils"
 	"context"
@@ -46,7 +47,7 @@ func (d Dao) insertArticleDetail(id string, bean interface{}) int {
 	type A struct {
 		Name string `json:"name"`
 	}
-	do, err := d.es.Index().Index("xxx").OpType("xx").Id(id).BodyString(data).Do(context.Background())
+	do, err := d.es.Index().Index(index).OpType(tp).Id(id).BodyString(data).Do(context.Background())
 	if utils.CheckError(err, do) {
 		return e.Success
 	}
@@ -68,34 +69,60 @@ func (d Dao) findArticle(detail wx.WeiXinParams, pn, ps int) (interface{}, inter
 	这里拼接es sql
 	*/
 	query := elastic.NewBoolQuery()
+	t := false
 	if detail.Keywords != "" {
 		split := strings.Split(detail.Keywords, ",")
 		for _, v := range split {
 			query.Should(elastic.NewMatchPhraseQuery("text", v))
-
 		}
+		t = true
 	}
 	if detail.Title != "" {
 		query.Should(elastic.NewMatchPhraseQuery("title", detail.Title))
+		t = true
 	}
 	if detail.From != "" {
 		query.Filter(elastic.NewRangeQuery("ptime").Gte(detail.From).Lte(detail.To))
 	}
 	if detail.Biz != "" {
 		query.Should(elastic.NewMatchQuery("biz", detail.Biz))
+		t = true
 	}
 
 	if detail.Pn <= 1 {
 		detail.Pn = 1
 	}
 
-	if detail.Ps < 0 || detail.Ps > 50 {
+	if detail.Ps <= 0 || detail.Ps > 50 {
 		detail.Ps = 50
 	}
-	result, err := d.es.Search("index").SearchType("type").Query(query).From(detail.Pn * detail.Ps).Size(detail.Ps).Pretty(true).Do(context.Background())
-	if utils.CheckError(err, result) {
-		return result.Hits.Hits, result.Hits.TotalHits
-	}
 
+	if !t {
+		query.Should(elastic.NewMatchAllQuery())
+	}
+	//查询单个id的文档
+	//result, err := d.es.Get().Index(config.EsIndex).Id("vfNTx2wBXVO2c-XIzCHy").Do(context.Background())
+	//bytes, err := result.Source.MarshalJSON()
+	//fmt.Print(string(bytes),err)
+	//查询所有
+	//query := elastic.NewMatchAllQuery()
+	//
+	//result, err := d.es.Search().Index(config.EsIndex).Query(query).Do(context.Background())
+	//if utils.CheckError(err, result) {
+	//	array := make([]interface{}, 0)
+	//	for _, hit := range result.Hits.Hits {
+	//		array = append(array, hit.Source)
+	//	}
+	//	return array, result.Hits.TotalHits.Value
+	//}
+
+	result, err := d.es.Search().Index(config.EsIndex).Query(query).Do(context.Background())
+	if utils.CheckError(err, result) {
+		array := make([]interface{}, 0)
+		for _, hit := range result.Hits.Hits {
+			array = append(array, hit.Source)
+		}
+		return array, result.Hits.TotalHits.Value
+	}
 	return nil, 0
 }

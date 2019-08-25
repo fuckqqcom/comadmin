@@ -30,15 +30,18 @@ type Api struct {
 //微信详情数据(es)
 //全文搜索准备 加入 title  biz
 type WeiXinDetail struct {
-	ArticleId string    `json:"id"`       //主键id
-	Title     string    `json:"title"`    //标题
-	Biz       string    `json:"biz"`      //biz
-	Text      string    `json:"text"`     //正文
-	Ctime     time.Time `json:"ctime"`    //入库时间
-	Mtime     time.Time `json:"mtime"`    //修改时间
-	Ptime     time.Time `json:"ptime"`    //发布时间
-	Author    time.Time `json:"author"`   //作者
-	Original  int       `json:"original"` //原创
+	Id        string    `json:"id"`         //主键id  ArticleId
+	Title     string    `json:"title"`      //标题
+	Text      string    `json:"text"`       //正文
+	TextStyle string    `json:"text_style"` //带样式的正文
+	Biz       string    `json:"biz"`        //biz
+	Ctime     time.Time `json:"ctime"`      //入库时间
+	Mtime     time.Time `json:"mtime"`      //修改时间
+	Ptime     time.Time `json:"ptime"`      //发布时间
+	Author    time.Time `json:"author"`     //作者
+	Original  int       `json:"original"`   //原创
+	WordCloud string    `json:"word_cloud"` //词云数据
+	Summary   string    `json:"summary"`    //摘要
 }
 
 type WeiXinParams struct {

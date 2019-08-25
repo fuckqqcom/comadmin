@@ -27,7 +27,9 @@ type Config struct {
 		Db       int
 	}
 	Es struct {
-		Host string
+		Host  string //es host
+		Type  string // es  type
+		Index string // es index
 	}
 }
 
@@ -35,6 +37,8 @@ var (
 	EngDb       *xorm.Engine
 	RedisClient *redis.Client
 	EsClient    *elastic.Client
+	EsType      string
+	EsIndex     string
 )
 
 func NewConfig(path string) (config Config) {
@@ -85,10 +89,13 @@ func (c *Config) LoadRedis() {
 func (c *Config) LoadElastic() {
 	var err error
 	fmt.Println("es --->", c.Es.Host)
+	EsType = c.Es.Type
+	EsIndex = c.Es.Index
 	EsClient, err = elastic.NewSimpleClient(elastic.SetURL(c.Es.Host))
 	if err != nil {
 		log.Printf("elastic conn is error %s", err)
 	}
+
 	//info := elasticsearch.Config{
 	//	Addresses: []string{""},
 	//	Transport: &http.Transport{
