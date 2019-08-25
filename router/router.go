@@ -49,6 +49,10 @@ func NewRouter(path string) *gin.Engine {
 		weiXin.POST("/post", r.PostData)
 		//查询数据接口
 		weiXin.POST("/find", r.FindDetail)
+		//入队列
+		weiXin.POST("/add", r.AddQueue)
+		//获取队列任务(默认是5个job)
+		weiXin.GET("/pop", r.PopQueue)
 	}
 	return r.Engine
 }

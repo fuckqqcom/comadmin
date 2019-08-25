@@ -72,3 +72,48 @@ func (h HttpWxHandler) FindDetail(c app.GContext) {
 	g.Json(http.StatusOK, code, m)
 	return
 }
+
+/**
+入队列
+*/
+func (h HttpWxHandler) AddQueue(c app.GContext) {
+	g := app.G{c}
+
+	var p wx.WeiXinList
+	code := e.Success
+	if !utils.CheckError(c.ShouldBindJSON(&p), "updateDomain") {
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+	code = h.logic.Create(p)
+	g.Json(http.StatusOK, code, "")
+	return
+}
+
+/**
+获取队列数据
+*/
+
+func (h HttpWxHandler) PopQueue(c app.GContext) {
+	g := app.G{c}
+
+	type Param struct {
+		Num int `json:"num"`
+	}
+	var p Param
+	code := e.Success
+	if !utils.CheckError(c.ShouldBindJSON(&p), "updateDomain") {
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+
+	xinList := wx.WeiXinList{}
+	list, count := h.logic.Find(xinList, p.Num, 0)
+	m := make(map[string]interface{})
+	m["count"] = count
+	m["list"] = list
+	g.Json(http.StatusOK, code, m)
+	return
+}

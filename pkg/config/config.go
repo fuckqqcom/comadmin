@@ -88,7 +88,6 @@ func (c *Config) LoadRedis() {
 
 func (c *Config) LoadElastic() {
 	var err error
-	fmt.Println("es --->", c.Es.Host)
 	EsType = c.Es.Type
 	EsIndex = c.Es.Index
 	EsClient, err = elastic.NewSimpleClient(elastic.SetURL(c.Es.Host))
