@@ -44,6 +44,21 @@ type WeiXinDetail struct {
 	Summary   string    `json:"summary"`    //摘要
 }
 
+//文章列表
+type WeiXinList struct {
+	Id        string    `json:"id"`         //文章id
+	SourceUrl string    `json:"source_url"` //原始url
+	Url       string    `json:"url"`        //文章url
+	Title     string    `json:"title"`      //文章标题
+	Ptime     time.Time `json:"ptime"`      //发布时间
+	Biz       string    `json:"biz"`        //biz信息
+	Digest    string    `json:"digest"`     //摘要
+	Original  int       `json:"original"`   //原型信息
+	Type      int       `json:"type"`       //api接口中的字段
+	DelFlag   int       `json:"del_flag"`   //是否删除
+	Cover     string    `json:"cover"`      //图链接
+}
+
 type WeiXinParams struct {
 	Biz      string `json:"biz"`      //查询biz
 	Keywords string `json:"keywords"` //关键字

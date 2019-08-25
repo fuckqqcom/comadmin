@@ -5,6 +5,7 @@ import (
 	"comadmin/pkg/config"
 	"comadmin/pkg/e"
 	"fmt"
+	"github.com/go-redis/redis"
 	"github.com/olivere/elastic/v7"
 	"github.com/xormplus/xorm"
 )
@@ -21,6 +22,7 @@ type Dao struct {
 	c      config.Config
 	engine *xorm.Engine
 	es     *elastic.Client
+	rs     *redis.Client
 }
 
 var (
@@ -29,7 +31,7 @@ var (
 )
 
 func NewDb(path string) *Dao {
-	return &Dao{engine: config.EngDb, es: config.EsClient, c: config.NewConfig(path)}
+	return &Dao{engine: config.EngDb, es: config.EsClient, rs: config.RedisClient, c: config.NewConfig(path)}
 }
 
 //接口   结构体
@@ -42,6 +44,8 @@ func (d Dao) Create(i interface{}) int {
 		return d.create(t)
 	case wx.WeiXinDetail:
 		return d.insertArticleDetail(t.Id, t)
+	case wx.WeiXinList:
+		return d.addQueue(t)
 	default:
 		fmt.Println("create other ...")
 		return e.Errors
@@ -71,7 +75,8 @@ func (d Dao) Find(i interface{}, pn, ps int) (interface{}, interface{}) {
 	switch t := i.(type) {
 	case wx.WeiXinParams:
 		return d.findArticle(t, pn, ps)
-
+	case wx.WeiXinList:
+		return d.popQueue(t, ps)
 	default:
 		fmt.Println("update other ...")
 		return nil, e.Errors
