@@ -116,10 +116,15 @@ func (d Dao) findArticle(detail wx.WeiXinParams, pn, ps int) (interface{}, inter
 	//	return array, result.Hits.TotalHits.Value
 	//}
 
-	result, err := d.es.Search().Index(config.EsIndex).Query(query).Do(context.Background())
+	field := elastic.NewFetchSourceContext(true)
+	field.Include("id", "text", "text_style", "biz", "author", "original", "word_cloud", "summary")
+
+	result, err := d.es.Search().FetchSourceContext(field).Index(config.EsIndex).Query(query).Do(context.Background())
 	if utils.CheckError(err, result) {
 		array := make([]interface{}, 0)
 		for _, hit := range result.Hits.Hits {
+			//var r ret
+			//json.Unmarshal(hit.Source, &r)
 			array = append(array, hit.Source)
 		}
 		return array, result.Hits.TotalHits.Value

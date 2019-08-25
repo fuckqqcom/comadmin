@@ -38,7 +38,7 @@ type WeiXinDetail struct {
 	Ctime     time.Time `json:"ctime"`      //入库时间
 	Mtime     time.Time `json:"mtime"`      //修改时间
 	Ptime     time.Time `json:"ptime"`      //发布时间
-	Author    time.Time `json:"author"`     //作者
+	Author    string    `json:"author"`     //作者
 	Original  int       `json:"original"`   //原创
 	WordCloud string    `json:"word_cloud"` //词云数据
 	Summary   string    `json:"summary"`    //摘要
