@@ -17,8 +17,8 @@ type Logic struct {
 	Db wxd.DbHandler
 }
 
-func (l Logic) Create(interface{}) int {
-	panic("implement me")
+func (l Logic) Create(i interface{}) int {
+	return l.Db.Create(i)
 }
 
 func (l Logic) FindBiz() (interface{}, int) {
