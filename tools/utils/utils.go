@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"log"
 	"regexp"
+	"time"
 )
 
 const (
@@ -45,4 +47,27 @@ func StringJoin(a ...string) string {
 		buf.WriteString(k)
 	}
 	return buf.String()
+}
+
+func Time2Str(format string) string {
+	now := time.Now()
+	//formatNow := now.Format("2006-01-02 15:04:05")
+	formatNow := now.Format(format)
+	fmt.Println(formatNow)
+	return formatNow
+}
+
+func NowTime() time.Time {
+	timeUnix := time.Now().Format("2006-01-02")
+	location, _ := time.ParseInLocation("2006-01-02", timeUnix, time.Local)
+	return location
+}
+
+func Str2Time(format, value string) time.Time {
+	local, _ := time.LoadLocation("Local")
+	//t, _ := time.ParseInLocation("2006-01-02 15:04:05", "2017-06-20 18:16:15", local)
+	t, _ := time.ParseInLocation(format, value, local)
+
+	fmt.Println(t)
+	return t
 }
