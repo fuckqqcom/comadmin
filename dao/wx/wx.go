@@ -13,6 +13,7 @@ import (
 
 func (d Dao) findBizList() (interface{}, int) {
 	type WeiXin struct {
+		Id   string `json:"id"`
 		Biz  string `json:"biz"`
 		Name string `json:"name"`
 	}

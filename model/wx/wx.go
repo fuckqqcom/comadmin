@@ -4,6 +4,7 @@ import "time"
 
 //公号属性
 type WeiXin struct {
+	Id     string    `json:"id"`  //微信id
 	Biz    string    `json:"biz"` //公号biz
 	Name   string    `json:"name"`
 	Desc   string    `json:"detail"` //公号描述
