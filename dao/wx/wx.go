@@ -2,7 +2,6 @@ package wxd
 
 import (
 	"comadmin/model/wx"
-	"comadmin/pkg/config"
 	"comadmin/pkg/e"
 	"comadmin/tools/utils"
 	"context"
@@ -48,7 +47,7 @@ func (d Dao) insertArticleDetail(id string, bean interface{}) int {
 	type A struct {
 		Name string `json:"name"`
 	}
-	do, err := d.es.Index().Index(index).OpType(tp).Id(id).BodyString(data).Do(context.Background())
+	do, err := d.es.Index().Index(*index).Id(id).BodyString(data).Do(context.Background())
 	if utils.CheckError(err, do) {
 		return e.Success
 	}
@@ -114,7 +113,7 @@ func (d Dao) findArticle(detail wx.WeiXinParams, pn, ps int) (interface{}, inter
 	field := elastic.NewFetchSourceContext(true)
 	field.Include("id", "text", "text_style", "biz", "author", "original", "word_cloud", "summary")
 
-	result, err := d.es.Search().FetchSourceContext(field).Index(config.EsIndex).Query(query).Do(context.Background())
+	result, err := d.es.Search().FetchSourceContext(field).Index(*index).Query(query).Do(context.Background())
 	if utils.CheckError(err, result) {
 		array := make([]interface{}, len(result.Hits.Hits))
 		for index, hit := range result.Hits.Hits {

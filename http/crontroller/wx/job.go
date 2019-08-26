@@ -6,6 +6,7 @@ import (
 	"comadmin/pkg/e"
 	"comadmin/tools/utils"
 	"net/http"
+	"time"
 )
 
 /**
@@ -23,6 +24,7 @@ func (h HttpWxHandler) AddDetail(c app.GContext) {
 		//Mtime     time.Time `json:"mtime"`      //修改时间
 		Ptime  string `json:"ptime" binding:"required" `  //发布时间
 		Author string `json:"author" binding:"required" ` //作者
+		From   string `json:"from"  binding:"required"`
 		//Original int       `json:"original" binding:"required"` //原创
 		//WordCloud string    `json:"word_cloud"` //词云数据
 		//Summary   string    `json:"summary"`    //摘要
@@ -40,7 +42,8 @@ func (h HttpWxHandler) AddDetail(c app.GContext) {
 	}
 	const t = "2006-01-02 15:04:05"
 
-	detail := wx.WeiXinDetail{Id: p.Id, Title: p.Title, Text: p.Text, TextStyle: p.TextStyle, Biz: p.Biz, Ptime: utils.Str2Time(t, p.Ptime), Author: p.Author, Forbid: 1}
+	detail := wx.WeiXinDetail{Id: p.Id, Title: p.Title, Text: p.Text, TextStyle: p.TextStyle, Biz: p.Biz,
+		Ptime: utils.Str2Time(t, p.Ptime), Author: p.Author, Forbid: 1, Ctime: time.Now().Local()}
 	h.logic.Create(detail)
 	g.Json(http.StatusOK, code, "")
 	return

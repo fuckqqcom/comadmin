@@ -60,3 +60,30 @@ TODO
         "msg":"",
         "data":""
     }
+
+四:提交列表页数据接口
+        (字段和pc端接口返回的字段差不多(兼容pc列表接口，可以应急数据))
+        Id        string    `json:"id"`         //文章id
+        SourceUrl string    `json:"source_url"` //原始url
+        Url       string    `json:"url"`        //文章url
+        Title     string    `json:"title"`      //文章标题
+        Ptime     time.Time `json:"ptime"`      //发布时间
+        Biz       string    `json:"biz"`        //biz信息
+        Digest    string    `json:"digest"`     //摘要
+        Original  int       `json:"original"`   //原型信息
+        Type      int       `json:"type"`       //api接口中的字段
+        DelFlag   int       `json:"del_flag"`   //是否删除
+        Cover     string    `json:"cover"`      //图链接
+
+        uri:wx/addQueue
+        method:post
+        params:{"id":"","source_url":"11","url":1,"title":1,"ptime":"","biz":"","digest":"","original":"","cover":""}
+        read_count:阅读数 类型:int
+        thumb_count:点赞数:类型  int
+
+        返回值:
+        {
+            "code":"",
+            "msg":"",
+            "data":""
+        }

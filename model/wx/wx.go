@@ -7,27 +7,32 @@ type WeiXin struct {
 	Id     string    `json:"id"`  //微信id
 	Biz    string    `json:"biz"` //公号biz
 	Name   string    `json:"name"`
-	Desc   string    `json:"detail"` //公号描述
-	Count  int       `json:"count"`  //公号文章数
-	Ctime  time.Time `json:"ctime"`  //创建时间
-	Mtime  time.Time `json:"mtime"`  //最后一次更新时间
-	Forbid int       `json:"forbid"` //公号是否被微信官方搞事了
-	Note   string    `json:"note"`   //被管放禁用后的提示 (生于xxx,卒于xxx)
+	Url    string    `json:"url"`                   //img url
+	Desc   string    `json:"detail"`                //公号描述
+	Count  int       `json:"count"`                 //公号文章数
+	Ctime  time.Time `json:"ctime" xorm:"created" ` //创建时间
+	Mtime  time.Time `json:"mtime" xorm:"updated" ` //最后一次更新时间
+	Forbid int       `json:"forbid"`                //公号是否被微信官方搞事了
+	Note   string    `json:"note"`                  //被管放禁用后的提示 (生于xxx,卒于xxx)
 }
 
 //阅读量和点赞量
 type WeiXinCount struct {
-	Biz        string `json:"biz"`
-	ArticleId  string `json:"article_id"`  //文章id
-	ReadCount  int    `json:"read_count"`  //阅读量
-	ThumbCount int    `json:"thumb_count"` //点赞数
+	Biz        string    `json:"biz"`
+	ArticleId  string    `json:"article_id"`            //文章id
+	ReadCount  int       `json:"read_count"`            //阅读量
+	ThumbCount int       `json:"thumb_count"`           //点赞数
+	Ctime      time.Time `json:"ctime" xorm:"created" ` //创建时间
+	Mtime      time.Time `json:"mtime" xorm:"updated" ` //最后一次更新时间
 }
 
 type Api struct {
-	Id       string `json:"id"`
-	Name     string `json:"name"`
-	Url      string `json:"url"`
-	Category int    `json:"category"` // 1是阅读点赞接口  2是详情接口 3是其他接口等
+	Id       string    `json:"id"`
+	Name     string    `json:"name"`
+	Url      string    `json:"url"`
+	Category int       `json:"category"`              // 1是阅读点赞接口  2是详情接口 3是其他接口等
+	Ctime    time.Time `json:"ctime" xorm:"created" ` //创建时间
+	Mtime    time.Time `json:"mtime" xorm:"updated" ` //最后一次更新时间
 }
 
 //微信详情数据(es)
@@ -46,21 +51,24 @@ type WeiXinDetail struct {
 	WordCloud string    `json:"word_cloud"` //词云数据
 	Summary   string    `json:"summary"`    //摘要
 	Forbid    int       `json:"forbid"`     //公号是否被微信官方搞事了
+	From      string    `json:"from"`       //来源微信
 }
 
 //文章列表
 type WeiXinList struct {
-	Id        string    `json:"id"`         //文章id
-	SourceUrl string    `json:"source_url"` //原始url
-	Url       string    `json:"url"`        //文章url
-	Title     string    `json:"title"`      //文章标题
-	Ptime     time.Time `json:"ptime"`      //发布时间
-	Biz       string    `json:"biz"`        //biz信息
-	Digest    string    `json:"digest"`     //摘要
-	Original  int       `json:"original"`   //原型信息
-	Type      int       `json:"type"`       //api接口中的字段
-	DelFlag   int       `json:"del_flag"`   //是否删除
-	Cover     string    `json:"cover"`      //图链接
+	Id        string    `json:"id"  binding:"required"`     //文章id
+	SourceUrl string    `json:"source_url" `                //原始url
+	Url       string    `json:"url"  binding:"required" `   //文章url
+	Title     string    `json:"title"  binding:"required" ` //文章标题
+	Ptime     time.Time `json:"ptime"`                      //发布时间
+	Biz       string    `json:"biz"  binding:"required"`    //biz信息
+	Digest    string    `json:"digest"`                     //摘要
+	Original  int       `json:"original"`                   //原型信息
+	Type      int       `json:"type"`                       //api接口中的字段
+	DelFlag   int       `json:"del_flag"`                   //是否删除
+	Cover     string    `json:"cover"`                      //图链接
+	Ctime     time.Time `json:"ctime" xorm:"created" `      //创建时间
+	Mtime     time.Time `json:"mtime" xorm:"updated" `      //最后一次更新时间
 }
 
 //用户提交信息的微信号
@@ -70,12 +78,12 @@ type WeiXinList struct {
 */
 type UserWx struct {
 	Uid    string    `json:"uid"`
-	Biz    string    `json:"biz"`    //biz信息
-	Name   string    `json:"name"`   //微信名称
-	Status int       `json:"status"` //同步到抓取数据库 status是1 否则是-1 提交初始状态是0
-	Note   string    `json:"note"`   //未审核通过原因
-	Ctime  time.Time `json:"ctime"`  //数据提交时间
-	Mtime  time.Time `json:"mtime"`  //审核时间
+	Biz    string    `json:"biz"`                   //biz信息
+	Name   string    `json:"name"`                  //微信名称
+	Status int       `json:"status"`                //同步到抓取数据库 status是1 否则是-1 提交初始状态是0
+	Note   string    `json:"note"`                  //未审核通过原因
+	Ctime  time.Time `json:"ctime" xorm:"created" ` //数据提交时间
+	Mtime  time.Time `json:"mtime" xorm:"updated"`  //审核时间
 }
 
 //查询参数

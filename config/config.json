@@ -17,7 +17,6 @@
   },
   "Es": {
     "Host": "http://58.87.64.219:9200",
-    "Type": "_doc",
     "Index":"weixin"
   }
 }

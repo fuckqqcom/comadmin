@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 func main() {
-	for i := 0; i <= 5; i++ {
-		fmt.Println(i)
-	}
+	local := time.Now().Local()
+	fmt.Println(local)
 }
 
 func read(c chan bool, i int) {

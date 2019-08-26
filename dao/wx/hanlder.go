@@ -28,8 +28,7 @@ type Dao struct {
 }
 
 var (
-	index = config.EsIndex
-	tp    = config.EsType
+	index = &config.EsIndex
 )
 
 func NewDb(path string) *Dao {

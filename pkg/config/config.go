@@ -28,7 +28,6 @@ type Config struct {
 	}
 	Es struct {
 		Host  string //es host
-		Type  string // es  type
 		Index string // es index
 	}
 }
@@ -37,7 +36,6 @@ var (
 	EngDb       *xorm.Engine
 	RedisClient *redis.Client
 	EsClient    *elastic.Client
-	EsType      string
 	EsIndex     string
 )
 
@@ -88,7 +86,6 @@ func (c *Config) LoadRedis() {
 
 func (c *Config) LoadElastic() {
 	var err error
-	EsType = c.Es.Type
 	EsIndex = c.Es.Index
 	EsClient, err = elastic.NewSimpleClient(elastic.SetURL(c.Es.Host))
 	if err != nil {
