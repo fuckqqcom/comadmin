@@ -5,7 +5,8 @@ import (
 )
 
 type LogicHandler interface {
-	Create(interface{}) int      //添加数据接口
+	Create(interface{}) int //添加数据接口
+	Update(interface{}, []string) int
 	FindBiz() (interface{}, int) //获取公号信息
 	FindApi() (interface{}, int) //获取接口
 	PostData(interface{}) int    //提交数据接口
@@ -34,6 +35,9 @@ func (l Logic) PostData(i interface{}) int {
 
 func (l Logic) Find(i interface{}, pn, ps int) (interface{}, interface{}) {
 	return l.Db.Find(i, pn, ps)
+}
+func (l Logic) Update(i interface{}, cols []string) int {
+	return l.Db.Update(i, cols)
 }
 
 var _ LogicHandler = Logic{}

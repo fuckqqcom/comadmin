@@ -47,12 +47,19 @@ func NewRouter(path string) *gin.Engine {
 		weiXin.GET("/api", r.FindApi)
 		//提交点赞和阅读量数据接口
 		weiXin.POST("/post", r.PostData)
-		//查询数据接口
-		weiXin.POST("/find", r.FindDetail)
-		//入队列
-		weiXin.POST("/add", r.AddQueue)
+		//详情页入库接口
+		weiXin.POST("/detail")
+		//入队列(列表数据入库)
+		weiXin.POST("/addQueue", r.AddQueue)
 		//获取队列任务(默认是5个job)
 		weiXin.GET("/pop", r.PopQueue)
+		//用户添加wx号
+		weiXin.POST("/addWx", r.UserAddWx)
+		//后台添加公号
+		weiXin.POST("/wx", r.AddWx)
+
+		//查询数据接口
+		weiXin.POST("/find", r.FindDetail)
 	}
 	return r.Engine
 }

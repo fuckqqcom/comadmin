@@ -4,12 +4,14 @@ import "time"
 
 //公号属性
 type WeiXin struct {
-	Biz   string    `json:"biz"` //公号biz
-	Name  string    `json:"name"`
-	Desc  string    `json:"detail"` //公号描述
-	Count int       `json:"count"`  //公号文章数
-	Ctime time.Time `json:"ctime"`  //创建时间
-	Mtime time.Time `json:"mtime"`  //最后一次更新时间
+	Biz    string    `json:"biz"` //公号biz
+	Name   string    `json:"name"`
+	Desc   string    `json:"detail"` //公号描述
+	Count  int       `json:"count"`  //公号文章数
+	Ctime  time.Time `json:"ctime"`  //创建时间
+	Mtime  time.Time `json:"mtime"`  //最后一次更新时间
+	Forbid int       `json:"forbid"` //公号是否被微信官方搞事了
+	Note   string    `json:"note"`   //被管放禁用后的提示 (生于xxx,卒于xxx)
 }
 
 //阅读量和点赞量
@@ -42,6 +44,7 @@ type WeiXinDetail struct {
 	Original  int       `json:"original"`   //原创
 	WordCloud string    `json:"word_cloud"` //词云数据
 	Summary   string    `json:"summary"`    //摘要
+	Forbid    int       `json:"forbid"`     //公号是否被微信官方搞事了
 }
 
 //文章列表
@@ -59,6 +62,22 @@ type WeiXinList struct {
 	Cover     string    `json:"cover"`      //图链接
 }
 
+//用户提交信息的微信号
+/**
+审核通过做数据迁移，只把name迁移进去(同时精确查询name是否存在)
+用户提交的时候也进行精确查询，如果存在提示已经存在,不在用户能看到的公号范围，提示用户xx
+*/
+type UserWx struct {
+	Uid    string    `json:"uid"`
+	Biz    string    `json:"biz"`    //biz信息
+	Name   string    `json:"name"`   //微信名称
+	Status int       `json:"status"` //同步到抓取数据库 status是1 否则是-1 提交初始状态是0
+	Note   string    `json:"note"`   //未审核通过原因
+	Ctime  time.Time `json:"ctime"`  //数据提交时间
+	Mtime  time.Time `json:"mtime"`  //审核时间
+}
+
+//查询参数
 type WeiXinParams struct {
 	Biz      string `json:"biz"`      //查询biz
 	Keywords string `json:"keywords"` //关键字

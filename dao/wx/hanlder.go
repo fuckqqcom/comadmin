@@ -11,7 +11,9 @@ import (
 )
 
 type DbHandler interface {
-	Create(interface{}) int      //添加数据接口
+	Create(interface{}) int           //添加数据接口
+	Update(interface{}, []string) int //修改
+
 	FindBiz() (interface{}, int) //获取公号信息
 	FindApi() (interface{}, int) //获取接口
 	PostData(interface{}) int    //提交数据接口
@@ -80,5 +82,17 @@ func (d Dao) Find(i interface{}, pn, ps int) (interface{}, interface{}) {
 	default:
 		fmt.Println("update other ...")
 		return nil, e.Errors
+	}
+}
+
+func (d Dao) Update(i interface{}, cols []string) int {
+	//todo 怎么优化
+	switch t := i.(type) {
+	case wx.UserWx:
+		fmt.Println(t)
+		return 0
+	default:
+		fmt.Println("update other ...")
+		return e.Errors
 	}
 }
