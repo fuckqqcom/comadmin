@@ -21,7 +21,7 @@ TODO
           "data": {
             "count": 1,
             "list": [
-              {
+              { "id":"公号id"
                 "biz": "MjM5OTcxMzE0MQ==",
                 "name": "Go中国"
               }
