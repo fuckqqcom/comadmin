@@ -49,3 +49,54 @@ func (h HttpWxHandler) AddDetail(c app.GContext) {
 	return
 
 }
+
+/**
+注册job任务
+*/
+func (h HttpWxHandler) RegisterJob(c app.GContext) {
+	type params struct {
+		Id string `json:"id" ` //第一次注册的时候 id为kong
+		Ip string `json:"ip" binding:"required" `
+	}
+	g := app.G{c}
+
+	var p params
+	code := e.Success
+	if !utils.CheckError(c.ShouldBindJSON(&p), "updateDomain") {
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+	job := wx.Job{Id: p.Id, IP: p.Ip}
+	id, code := h.logic.Register(job)
+	g.Json(http.StatusOK, code, id)
+	return
+
+}
+
+func (h HttpWxHandler) UpdateJob(c app.GContext) {
+	type params struct {
+		Id string `json:"id" binding:"required" `
+		Ip string `json:"ip" binding:"required" `
+	}
+	g := app.G{c}
+
+	var p params
+	code := e.Success
+	if !utils.CheckError(c.ShouldBindJSON(&p), "updateDomain") {
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+	count := h.logic.FindCountByIdAndIp(p.Id, p.Ip)
+	if count == 0 {
+		code = e.JobError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+	cols := []string{"count", "etime", "status"}
+	job := wx.Job{Id: p.Id, IP: p.Ip, Etime: time.Now().Local(), Count: count + 1, Status: -1}
+	code = h.logic.Update(job, cols)
+	g.Json(http.StatusOK, code, "")
+	return
+}

@@ -11,14 +11,24 @@ import (
 )
 
 type DbHandler interface {
+	wxHandler
+	jobHandler
+}
+
+type wxHandler interface {
 	Create(interface{}) int           //添加数据接口
 	Update(interface{}, []string) int //修改
 
-	FindBiz() (interface{}, int) //获取公号信息
-	FindApi() (interface{}, int) //获取接口
-	PostData(interface{}) int    //提交数据接口
-	Find(i interface{}, pn, ps int) (interface{}, interface{})
-} //查询
+	FindBiz(string) (interface{}, int)                         //获取公号信息
+	FindApi() (interface{}, int)                               //获取接口
+	PostData(interface{}) int                                  //提交数据接口
+	Find(i interface{}, pn, ps int) (interface{}, interface{}) //查询
+}
+
+type jobHandler interface {
+	Register(interface{}) (interface{}, int)
+	FindCountByIdAndIp(id, ip string) int
+}
 
 type Dao struct {
 	c      config.Config
@@ -38,6 +48,19 @@ func NewDb(path string) *Dao {
 //接口   结构体
 var _ DbHandler = Dao{}
 
+func (d Dao) FindCountByIdAndIp(id, ip string) int {
+	return d.findJobCount(id, ip)
+}
+
+func (d Dao) Register(i interface{}) (interface{}, int) {
+	switch t := i.(type) {
+	case wx.Job:
+		return d.register(t)
+	default:
+		return nil, e.Errors
+	}
+}
+
 //后台创建数据
 func (d Dao) Create(i interface{}) int {
 	switch t := i.(type) {
@@ -53,8 +76,8 @@ func (d Dao) Create(i interface{}) int {
 	}
 }
 
-func (d Dao) FindBiz() (interface{}, int) {
-	return d.findBizList()
+func (d Dao) FindBiz(id string) (interface{}, int) {
+	return d.findBizList(id)
 }
 
 func (d Dao) FindApi() (interface{}, int) {
@@ -90,6 +113,8 @@ func (d Dao) Update(i interface{}, cols []string) int {
 	case wx.UserWx:
 		fmt.Println(t)
 		return 0
+	case wx.Job:
+		return d.update(t.Id, t, cols...)
 	default:
 		fmt.Println("update other ...")
 		return e.Errors

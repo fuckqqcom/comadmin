@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func (d Dao) findBizList() (interface{}, int) {
+func (d Dao) findBizList(mobileId string) (interface{}, int) {
 	type WeiXin struct {
 		Id   string `json:"id"`
 		Biz  string `json:"biz"`

@@ -7,6 +7,7 @@ const (
 	Forbid           = 403
 	Unauthorized     = 401
 	TokenCreateError = 2000
+	JobError         = 3000
 
 	//业务编码
 	AddError      = 1000 //添加失败

@@ -5,6 +5,10 @@ import (
 )
 
 type LogicHandler interface {
+	adminHandler
+}
+
+type adminHandler interface {
 	Login(interface{}) int
 	Create(interface{}) int
 	Delete(interface{}) int
