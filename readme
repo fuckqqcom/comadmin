@@ -4,7 +4,7 @@ TODO
 中间件中加入防止sql注入的功能
 是否可以在初始化的结构体中指定goroutine的数量,然后利用channel通信
 
-
+?如何接受一个数组参数
 
 接口文档
     url:http://58.87.64.219/
@@ -14,7 +14,7 @@ TODO
 一:获取公号信息和biz信息接口:
     uri:wx/biz
     method:get
-    params:无
+    params:{"mobile_id":""}//手机id 每个手机是唯一的
     返回值:
         {
           "code": 200,
