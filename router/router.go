@@ -12,7 +12,8 @@ func NewRouter(path string) *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	//r.Use(middleware.JWT())
-	domain := r.Group("/v1/domain")
+	g := r.Group("/v1")
+	domain := g.Group("/domain")
 	{
 		//域
 		domain.POST("/create", r.CreateDomain)
@@ -27,7 +28,7 @@ func NewRouter(path string) *gin.Engine {
 	}
 
 	//用户操作
-	user := r.Group("/v1/user")
+	user := g.Group("/user")
 	user.POST("/register", r.Register) //用户注册
 	user.POST("/login", r.Login)       //用户登录
 	{
@@ -39,7 +40,7 @@ func NewRouter(path string) *gin.Engine {
 		user.POST("/forbidUser", r.UpdateUserStatus)
 	}
 
-	weiXin := r.Group("/wx")
+	weiXin := g.Group("/wx")
 	{
 		//获取所有biz和name信息
 		weiXin.GET("/biz", r.FindBiz)
