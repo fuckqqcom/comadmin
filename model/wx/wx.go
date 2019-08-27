@@ -4,16 +4,17 @@ import "time"
 
 //公号属性
 type WeiXin struct {
-	Id     string    `json:"id"`  //微信id
-	Biz    string    `json:"biz"` //公号biz
-	Name   string    `json:"name"`
-	Url    string    `json:"url"`                   //img url
-	Desc   string    `json:"detail"`                //公号描述
-	Count  int       `json:"count"`                 //公号文章数
-	Ctime  time.Time `json:"ctime" xorm:"created" ` //创建时间
-	Mtime  time.Time `json:"mtime" xorm:"updated" ` //最后一次更新时间
-	Forbid int       `json:"forbid"`                //公号是否被微信官方搞事了
-	Note   string    `json:"note"`                  //被管放禁用后的提示 (生于xxx,卒于xxx)
+	MobileId string    `json:"mobile_id"` //手机id
+	Id       string    `json:"id"`        //微信id
+	Biz      string    `json:"biz"`       //公号biz
+	Name     string    `json:"name"`
+	Url      string    `json:"url"`                   //img url
+	Desc     string    `json:"detail"`                //公号描述
+	Count    int       `json:"count"`                 //公号文章数
+	Ctime    time.Time `json:"ctime" xorm:"created" ` //创建时间
+	Mtime    time.Time `json:"mtime" xorm:"updated" ` //最后一次更新时间
+	Forbid   int       `json:"forbid"`                //公号是否被微信官方搞事了
+	Note     string    `json:"note"`                  //被管放禁用后的提示 (生于xxx,卒于xxx)
 }
 
 //阅读量和点赞量

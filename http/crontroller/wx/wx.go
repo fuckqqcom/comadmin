@@ -91,9 +91,21 @@ func (h HttpWxHandler) UserAddWx(c app.GContext) {
 
 //获取所有biz信息
 func (h HttpWxHandler) FindBiz(c app.GContext) {
+
+	type params struct {
+		MobileId string `json:"mobile_id"  binding:"required"` //手机id
+	}
 	g := app.G{c}
 
-	biz, count := h.logic.FindBiz()
+	var p params
+	code := e.Success
+	if !utils.CheckError(c.ShouldBindJSON(&p), "userAddWx") {
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+
+	biz, count := h.logic.FindBiz(p.MobileId)
 	m := make(map[string]interface{})
 	m["list"] = biz
 	m["count"] = count
