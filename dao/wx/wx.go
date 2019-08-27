@@ -41,7 +41,7 @@ func (d Dao) findApi() (interface{}, int) {
 func (d Dao) insertArticleDetail(id string, bean interface{}) int {
 	data := ""
 	marshal, err := json.Marshal(bean)
-	if err != nil {
+	if err == nil {
 		data = string(marshal)
 	}
 	type A struct {

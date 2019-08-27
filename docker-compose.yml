@@ -1,0 +1,81 @@
+version: '3'
+
+services:
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - /home/xiaohan/docker/redis/data:/data
+      - /home/xiaohan/docker/redis/conf/:/etc/redis/
+    command: redis-server  /etc/redis/redis.conf --appendonly yes 
+
+  # mongo:
+    # image: mongo
+    # restart: always
+    # ports:
+      # - 27017:27017
+    # volumes:
+      # - /home/xiaohan/docker/mongo/db:/data/db
+    # command: mongod --auth
+    # tty: true
+
+  mysql:
+    image: mysql
+    restart: always
+    ports:
+      - 3306:3306
+    container_name: my_mysql
+    volumes:
+      -  /home/xiaohan/docker/mysql/conf:/etc/mysql/conf.d
+      - /home/xiaohan/docker/mysql/logs:/logs:rw
+      - /home/xiaohan/docker/mysql/data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+    environment:
+      {"MYSQL_ROOT_PASSWORD": "abc123456"}
+      
+  nginx:
+    image: nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /home/xiaohan/docker/nginx/conf.d:/etc/nginx/conf.d
+      - /home/xiaohan/docker/nginx/log:/var/log/nginx
+      - /home/xiaohan/docker/nginx/html:/usr/share/nginx/html
+      - /home/xiaohan/docker/nginx/key:/etc/key
+    tty: true
+  
+  elasticsearch01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.1
+    restart: always
+    container_name: es01
+    environment:
+      - node.name=es01
+        #- discovery.seed_hosts=es02
+      - cluster.initial_master_nodes=es01
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms215m -Xmx215m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /home/xiaohan/docker/elasticsearch/data:/usr/share/elasticsearch/data
+      - /home/xiaohan/docker/elasticsearch/logs:/usr/share/elasticsearch/logs
+      - /home/xiaohan/docker/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - esnet
+      
+networks:
+  esnet:
+
