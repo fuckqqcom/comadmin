@@ -67,32 +67,57 @@ func (d Dao) insertArticleList(bean interface{}) int {
 func (d Dao) findArticle(detail wx.WeiXinParams, pn, ps int) (interface{}, interface{}) {
 	/**
 	这里拼接es sql
+
+	GET weixin/_search
+	{
+	  "query": {
+	    "bool": {
+	      "must": [
+	       {
+	         "term": {
+	           "forbid": {
+	             "value": 1
+	           }
+	         }
+	       },
+	       {
+	         "match_phrase": {
+	           "title": "中国"
+	         }
+	       }
+	      ]
+	    }
+	  }
+	}
+
+	select a from table where forbid = 1 and ( title like "%aaa%" or text like "%bbb%")
+
 	*/
 	query := elastic.NewBoolQuery()
 	t := false
 	if detail.Keywords != "" {
 		split := strings.Split(detail.Keywords, ",")
 		for _, v := range split {
-			query.Should(elastic.NewMatchPhraseQuery("text", v))
+			query.Must(elastic.NewMatchPhraseQuery("title", v))
 		}
 		t = true
 	}
 	if detail.Title != "" {
-		query.Should(elastic.NewMatchPhraseQuery("title", detail.Title))
+		query.Must(elastic.NewMatchPhraseQuery("title", detail.Title))
 		t = true
 	}
 	if detail.From != "" {
 		query.Filter(elastic.NewRangeQuery("ptime").Gte(detail.From).Lte(detail.To))
 	}
 	if detail.Biz != "" {
-		query.Should(elastic.NewMatchQuery("biz", detail.Biz))
+		query.Must(elastic.NewMatchQuery("biz", detail.Biz))
 		t = true
 	}
 	//在所有未被管放拉黑的数据中查找
-	query.Must(elastic.NewMatchQuery("forbid", 1))
+	query.Must(elastic.NewTermQuery("forbid", 1))
 
 	if !t {
-		query.Should(elastic.NewMatchAllQuery())
+		query.Must(elastic.NewMatchAllQuery())
 	}
 	//查询单个id的文档
 	//result, err := d.es.Get().Index(config.EsIndex).Id("vfNTx2wBXVO2c-XIzCHy").Do(context.Background())
@@ -111,7 +136,7 @@ func (d Dao) findArticle(detail wx.WeiXinParams, pn, ps int) (interface{}, inter
 	//}
 
 	field := elastic.NewFetchSourceContext(true)
-	field.Include("id", "text", "text_style", "biz", "author", "original", "word_cloud", "summary")
+	field.Include("id", "text", "text_style", "biz", "author", "original", "word_cloud", "summary", "title")
 
 	result, err := d.es.Search().FetchSourceContext(field).Index(*index).Query(query).Do(context.Background())
 	if utils.CheckError(err, result) {
