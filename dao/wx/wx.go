@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"github.com/olivere/elastic/v7"
 	"strings"
+	"time"
 )
 
 func (d Dao) findBizList(mobileId string) (interface{}, int) {
@@ -68,76 +69,46 @@ func (d Dao) findArticle(detail wx.WeiXinParams, pn, ps int) (interface{}, inter
 	/**
 	这里拼接es sql
 
-	GET weixin/_search
-	{
-	  "query": {
-	    "bool": {
-	      "must": [
-	       {
-	         "term": {
-	           "forbid": {
-	             "value": 1
-	           }
-	         }
-	       },
-	       {
-	         "match_phrase": {
-	           "title": "中国"
-	         }
-	       }
-	      ]
-	    }
-	  }
-	}
 
 	select a from table where forbid = 1 and ( title like "%aaa%" or text like "%bbb%")
 
+	https://www.tuicool.com/articles/NFVzeqy
 	*/
+	//zuiwaiceng  query bool
 	query := elastic.NewBoolQuery()
-	t := false
+
+	boolQuery := elastic.NewBoolQuery()
+	boolQuery.Must(elastic.NewTermQuery("forbid", 1))
+	query.Filter(boolQuery)
+	filter := elastic.NewBoolQuery()
+	newBoolQuery := elastic.NewBoolQuery()
+	queryFilter := filter.Must(newBoolQuery)
+	if detail.Title != "" {
+		newBoolQuery.Should(elastic.NewWildcardQuery("title", detail.Title))
+	}
+
 	if detail.Keywords != "" {
 		split := strings.Split(detail.Keywords, ",")
 		for _, v := range split {
-			query.Must(elastic.NewMatchPhraseQuery("title", v))
+			newBoolQuery.Should(elastic.NewWildcardQuery("title", v))
+			newBoolQuery.Should(elastic.NewWildcardQuery("text", v))
 		}
-		t = true
-	}
-	if detail.Title != "" {
-		query.Must(elastic.NewMatchPhraseQuery("title", detail.Title))
-		t = true
-	}
-	if detail.From != "" {
-		query.Filter(elastic.NewRangeQuery("ptime").Gte(detail.From).Lte(detail.To))
 	}
 	if detail.Biz != "" {
 		query.Must(elastic.NewMatchQuery("biz", detail.Biz))
-		t = true
 	}
-	//在所有未被管放拉黑的数据中查找
-	query.Must(elastic.NewTermQuery("forbid", 1))
-
-	if !t {
-		query.Must(elastic.NewMatchAllQuery())
+	const t = "2006-01-02 15:04:05"
+	if detail.From != "" && detail.To != "" {
+		query.Filter(elastic.NewRangeQuery("ptime").Gte(utils.Str2Time(t, detail.From)).Lte(utils.Str2Time(t, detail.To)))
+	} else if detail.From != "" {
+		query.Filter(elastic.NewRangeQuery("ptime").Gte(utils.Str2Time(t, detail.From)).Lte(time.Now()))
 	}
-	//查询单个id的文档
-	//result, err := d.es.Get().Index(config.EsIndex).Id("vfNTx2wBXVO2c-XIzCHy").Do(context.Background())
-	//bytes, err := result.Source.MarshalJSON()
-	//fmt.Print(string(bytes),err)
-	//查询所有
-	//query := elastic.NewMatchAllQuery()
-	//
-	//result, err := d.es.Search().Index(config.EsIndex).Query(query).Do(context.Background())
-	//if utils.CheckError(err, result) {
-	//	array := make([]interface{}, 0)
-	//	for _, hit := range result.Hits.Hits {
-	//		array = append(array, hit.Source)
-	//	}
-	//	return array, result.Hits.TotalHits.Value
-	//}
+	query.Filter(queryFilter)
 
 	field := elastic.NewFetchSourceContext(true)
-	field.Include("id", "text", "text_style", "biz", "author", "original", "word_cloud", "summary", "title")
-
+	field.Include("id", "text", "text_style", "biz", "author", "original", "word_cloud", "summary", "title", "forbid")
+	source, _ := query.Source()
+	utils.PrintQuery(source)
 	result, err := d.es.Search().FetchSourceContext(field).Index(*index).Query(query).Do(context.Background())
 	if utils.CheckError(err, result) {
 		array := make([]interface{}, len(result.Hits.Hits))

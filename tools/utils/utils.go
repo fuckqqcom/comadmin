@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"log"
 	"regexp"
@@ -70,4 +71,15 @@ func Str2Time(format, value string) time.Time {
 
 	fmt.Println(t)
 	return t
+}
+
+/**
+打印es sql
+*/
+func PrintQuery(src interface{}) {
+	data, err := json.MarshalIndent(src, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	log.Printf("es sql--->%s", string(data))
 }
