@@ -50,10 +50,10 @@ func StringJoin(a ...string) string {
 	return buf.String()
 }
 
-func Time2Str(format string) string {
-	now := time.Now()
+func Time2Str(t time.Time, format string) string {
+	//now := time.Now()
 	//formatNow := now.Format("2006-01-02 15:04:05")
-	formatNow := now.Format(format)
+	formatNow := t.Format(format)
 	fmt.Println(formatNow)
 	return formatNow
 }
