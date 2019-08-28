@@ -64,7 +64,7 @@ func (d Dao) popQueue(l wx.WeiXinList, num int) (interface{}, int) {
 	if num <= 0 || num >= 10 {
 		num = 5
 	}
-	s := make([]interface{}, num)
+	s := make([]interface{}, 0)
 	/**
 	先根据出来的数据考虑是否序列化下
 	*/
@@ -79,6 +79,10 @@ func (d Dao) popQueue(l wx.WeiXinList, num int) (interface{}, int) {
 	for i := 0; i <= num; i++ {
 		var p Params
 		pop, err := d.rs.SPop(detailKey).Result()
+		if pop == "" {
+			utils.CheckError(err, pop)
+			break
+		}
 		if utils.CheckError(err, pop) {
 			s[i] = json.Unmarshal([]byte(pop), &p)
 		}

@@ -220,3 +220,32 @@ func (h HttpWxHandler) PopQueue(c app.GContext) {
 	g.Json(http.StatusOK, code, m)
 	return
 }
+
+/**
+获取近七天发布的文章
+*/
+
+func (h HttpWxHandler) Nearly7Day(c app.GContext) {
+	type params struct {
+		Pn  int    `json:"pn"`
+		Biz string `json:"biz"`
+		Ps  int    `json:"ps"`
+	}
+
+	g := app.G{c}
+
+	var p params
+	code := e.Success
+	if !utils.CheckError(c.ShouldBindJSON(&p), "updateDomain") {
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+	w := wx.WeiXinList{Biz: p.Biz}
+	list, count := h.logic.FindList(w, p.Pn, p.Ps)
+	m := make(map[string]interface{})
+	m["count"] = count
+	m["list"] = list
+	g.Json(http.StatusOK, code, m)
+	return
+}

@@ -64,6 +64,8 @@ func NewRouter(path string) *gin.Engine {
 		weiXin.POST("/registerJob", r.RegisterJob)
 		//更新job
 		weiXin.POST("/updateJob", r.UpdateJob)
+		//获取近七天的文章列表
+		weiXin.POST("/nearly7Day", r.Nearly7Day)
 	}
 	return r.Engine
 }

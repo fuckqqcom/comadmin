@@ -12,6 +12,7 @@ type LogicHandler interface {
 type jobHandler interface {
 	FindCountByIdAndIp(id, ip string) int
 	Register(interface{}) (interface{}, int)
+	FindList(interface{}, int, int) (interface{}, int)
 }
 
 type logicHandler interface {
@@ -52,6 +53,10 @@ func (l Logic) PostData(i interface{}) int {
 
 func (l Logic) Find(i interface{}, pn, ps int) (interface{}, interface{}) {
 	return l.Db.Find(i, pn, ps)
+}
+
+func (l Logic) FindList(i interface{}, pn, ps int) (interface{}, int) {
+	return l.Db.FindList(i, pn, ps)
 }
 func (l Logic) Update(i interface{}, cols []string) int {
 	return l.Db.Update(i, cols)

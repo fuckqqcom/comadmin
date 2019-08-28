@@ -23,6 +23,7 @@ type wxHandler interface {
 	FindApi() (interface{}, int)                               //获取接口
 	PostData(interface{}) int                                  //提交数据接口
 	Find(i interface{}, pn, ps int) (interface{}, interface{}) //查询
+	FindList(i interface{}, pn, ps int) (interface{}, int)     //查询待抓取的数据list
 }
 
 type jobHandler interface {
@@ -103,6 +104,16 @@ func (d Dao) Find(i interface{}, pn, ps int) (interface{}, interface{}) {
 		return d.popQueue(t, ps)
 	default:
 		fmt.Println("update other ...")
+		return nil, e.Errors
+	}
+}
+
+func (d Dao) FindList(i interface{}, pn, ps int) (interface{}, int) {
+
+	switch t := i.(type) {
+	case wx.WeiXinList:
+		return d.wxList(t, pn, ps)
+	default:
 		return nil, e.Errors
 	}
 }

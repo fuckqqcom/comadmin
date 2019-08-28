@@ -6,6 +6,7 @@ import (
 	"comadmin/tools/utils"
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/olivere/elastic/v7"
 	"strings"
 	"time"
@@ -62,6 +63,24 @@ func (d Dao) insertArticleList(bean interface{}) int {
 		return e.Success
 	}
 	return e.Errors
+}
+
+func (d Dao) wxList(list wx.WeiXinList, pn, ps int) (interface{}, int) {
+	sql := "select biz , url from wei_xin_list where 1=1  "
+	if list.Biz == "" {
+		sql += fmt.Sprintf(" and biz = '%s'", list.Biz)
+	}
+	sql += fmt.Sprintf(" ptime >= '%s' ", time.Now().AddDate(0, 0, -7))
+	type ret struct {
+		Biz string
+		Url string
+	}
+	w := make([]ret, 0)
+	count, err := d.engine.SQL(sql).Limit(ps, (pn-1)*ps).FindAndCount(&w)
+	if utils.CheckError(err, count) {
+		return w, int(count)
+	}
+	return nil, 0
 }
 
 //查询数据
