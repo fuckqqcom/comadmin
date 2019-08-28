@@ -241,6 +241,14 @@ func (h HttpWxHandler) Nearly7Day(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
+
+	if p.Pn <= 1 {
+		p.Pn = 1
+	}
+
+	if p.Ps <= 0 || p.Ps > 50 {
+		p.Ps = 200
+	}
 	w := wx.WeiXinList{Biz: p.Biz}
 	list, count := h.logic.FindList(w, p.Pn, p.Ps)
 	m := make(map[string]interface{})

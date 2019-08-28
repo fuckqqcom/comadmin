@@ -7,7 +7,7 @@ TODO
 ?如何接受一个数组参数
 
 接口文档
-    url:http://58.87.64.219/
+    url:http://api.pipenv.com/v1/
     code:200表示成功   其他的表示异常
 
 
@@ -87,6 +87,24 @@ TODO
             "msg":"",
             "data":""
         }
+
+
+五:获取抓取列表新信息(近七天的):
+    url:wx/nearly7Day
+    paramm:{"biz":"",pn:1,ps:1}//pn页码 ps每页多少条
+    method:post
+    返回值:
+          返回值:
+                {
+                  "code": 200,
+                  "data": {
+                    "count": 0,
+                    "list": [
+                        {"biz":"biz","url":"xxx"}
+                    ]
+                  },
+                  "msg": "成功"
+                }
 
 
 nginx异常配置总结:
