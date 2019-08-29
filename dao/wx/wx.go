@@ -70,7 +70,7 @@ func (d Dao) wxList(list wx.WeiXinList, pn, ps int) (interface{}, int) {
 	if list.Biz != "" {
 		sql += fmt.Sprintf(" and biz = '%s'", list.Biz)
 	}
-	sql += fmt.Sprintf(" ptime >= '%s' ", utils.Time2Str(time.Now().AddDate(0, 0, -7), "2006-01-02 15:04:05"))
+	sql += fmt.Sprintf(" and ptime >= '%s' ", utils.Time2Str(time.Now().AddDate(0, 0, -7), "2006-01-02 15:04:05"))
 	type ret struct {
 		Biz string
 		Url string
