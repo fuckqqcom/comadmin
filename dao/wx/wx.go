@@ -67,7 +67,7 @@ func (d Dao) insertArticleList(bean interface{}) int {
 
 func (d Dao) wxList(list wx.WeiXinList, pn, ps int) (interface{}, int) {
 	sql := "select biz , url from wei_xin_list where 1=1  "
-	if list.Biz == "" {
+	if list.Biz != "" {
 		sql += fmt.Sprintf(" and biz = '%s'", list.Biz)
 	}
 	sql += fmt.Sprintf(" ptime >= '%s' ", time.Now().AddDate(0, 0, -7))
