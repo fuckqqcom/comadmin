@@ -20,8 +20,11 @@ func (d Dao) findBizList(mobileId string) (interface{}, int) {
 	}
 
 	w := make([]WeiXin, 0)
-
-	count, err := d.engine.FindAndCount(&w)
+	sql := "select * from wei_xin where 1=1 "
+	if mobileId != "" {
+		sql += fmt.Sprintf(" and mobile_id = '%s'", mobileId)
+	}
+	count, err := d.engine.SQL(sql).OrderBy("mtime desc ").FindAndCount(&w)
 	if utils.CheckError(err, count) {
 		return w, int(count)
 	}
