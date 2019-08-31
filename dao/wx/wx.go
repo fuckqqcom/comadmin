@@ -185,3 +185,22 @@ func (d Dao) updateWx(id interface{}, bean interface{}, cols ...string) int {
 	}
 	return e.Errors
 }
+
+//更新阅读点赞
+func (d Dao) updateCount(w wx.WeiXinCount) int {
+	affect, err := d.engine.Where(" biz = ?  and article_id = ? ", w.Biz, w.ArticleId).Cols("read_count", "thumb_count").Update(w)
+	if utils.CheckError(err, affect) {
+		return e.Success
+	}
+	return e.Errors
+}
+
+//查询 biz是否存在
+
+func (d Dao) existBiz(bean interface{}, id, articleId string) int {
+	affect, err := d.engine.Where("biz = ? and article_id = ?", id, articleId).Exist(bean)
+	if utils.CheckError(err, affect) && affect {
+		return e.Success
+	}
+	return e.ExistError
+}

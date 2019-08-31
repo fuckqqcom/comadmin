@@ -88,7 +88,12 @@ func (d Dao) FindApi() (interface{}, int) {
 func (d Dao) PostData(i interface{}) int {
 	switch t := i.(type) {
 	case wx.WeiXinCount:
-		return d.create(t)
+		if d.existBiz(t, t.Biz, t.ArticleId) == e.Success {
+			return d.updateCount(t)
+		} else {
+			return d.create(t)
+		}
+
 	default:
 		fmt.Println("create other ...")
 		return e.Errors
