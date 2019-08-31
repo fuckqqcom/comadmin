@@ -127,11 +127,13 @@ func (h HttpWxHandler) FindApi(c app.GContext) {
 
 func (h HttpWxHandler) PostData(c app.GContext) {
 	type params struct {
-		Biz        string `json:"biz"`
-		ArticleId  string `json:"article_id"`
+		Biz        string `json:"biz"  binding:"required"`
+		ArticleId  string `json:"article_id"  binding:"required"`
 		ReadCount  int    `json:"read_count"`
 		ThumbCount int    `json:"thumb_count"`
 	}
+
+	//这里优化下，这里组装字段
 	g := app.G{c}
 
 	var p params
