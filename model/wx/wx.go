@@ -60,18 +60,18 @@ type WeiXinDetail struct {
 type WeiXinList struct {
 	HashId    string    `json:"hash_id"`
 	Id        int64     //文章id
-	SourceUrl string    `json:"source_url" `           //原始url
-	Url       string    `json:"url"  `                 //文章url
-	Title     string    `json:"title"  `               //文章标题
-	Ptime     time.Time `json:"ptime"`                 //发布时间
-	Biz       string    `json:"biz" `                  //biz信息
-	Digest    string    `json:"digest"`                //摘要
-	Original  int       `json:"original"`              //原型信息
-	Type      int       `json:"type"`                  //api接口中的字段
-	DelFlag   int       `json:"del_flag"`              //是否删除
-	Cover     string    `json:"cover"`                 //图链接
-	Ctime     time.Time `json:"ctime" xorm:"created" ` //创建时间
-	Mtime     time.Time `json:"mtime" xorm:"updated" ` //最后一次更新时间
+	SourceUrl string    `json:"source_url" `                 //原始url
+	Url       string    `json:"url"  binding:"required" `    //文章url
+	Title     string    `json:"title" binding:"required"   ` //文章标题
+	Ptime     time.Time `json:"ptime"`                       //发布时间
+	Biz       string    `json:"biz" binding:"required" `     //biz信息
+	Digest    string    `json:"digest"`                      //摘要
+	Original  int       `json:"original"`                    //原型信息
+	Type      int       `json:"type"`                        //api接口中的字段
+	DelFlag   int       `json:"del_flag"`                    //是否删除
+	Cover     string    `json:"cover"`                       //图链接
+	Ctime     time.Time `json:"ctime" xorm:"created" `       //创建时间
+	Mtime     time.Time `json:"mtime" xorm:"updated" `       //最后一次更新时间
 }
 
 //用户提交信息的微信号

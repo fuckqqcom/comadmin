@@ -49,7 +49,7 @@ func (d Dao) addQueue(l wx.WeiXinList) int {
 	if utils.CheckError(err, string(bytes)) {
 		add, err := d.rs.SAdd(detailKey, string(bytes)).Result()
 		if utils.CheckError(err, add) {
-			log.Printf("addQueue ret is %s", add)
+			log.Printf("addQueue ret is %v", add)
 			return e.Success
 		}
 		return e.Errors

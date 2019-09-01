@@ -12,9 +12,10 @@ TODO
 
 
 一:获取公号信息和biz信息接口:
-    uri:wx/biz
+    uri:wx/getBiz
     method:get
-    params:{"mobile_id":""}//手机id 每个手机是唯一的
+    params:{"mobile_id":"","Pn":0,"Ps":0}//mobile_id 每个手机是唯一的,必传参数
+     pn ,ps默认是1和200，不传递就是1和200
     返回值:
         {
           "code": 200,
@@ -31,7 +32,7 @@ TODO
         }
 
 二:获取点赞和阅读量接口:
-    uri:wx/api
+    uri:wx/getApi
     method:get
     params:无
     返回值:
@@ -48,9 +49,10 @@ TODO
 
 
 三:提交阅读数和点赞数接口
-    uri:wx/post
+    uri:wx/readAndThumbCount
     method:post
     params:{"biz":"","article_id":"11","read_count":1,"thumb_count":1}
+    biz和article_id是必传参数
     read_count:阅读数 类型:int
     thumb_count:点赞数:类型  int
 
@@ -63,7 +65,6 @@ TODO
 
 四:提交列表页数据接口
         (字段和pc端接口返回的字段差不多(兼容pc列表接口，可以应急数据))
-        Id        string    `json:"id"`         //文章id
         SourceUrl string    `json:"source_url"` //原始url
         Url       string    `json:"url"`        //文章url
         Title     string    `json:"title"`      //文章标题
@@ -75,9 +76,10 @@ TODO
         DelFlag   int       `json:"del_flag"`   //是否删除
         Cover     string    `json:"cover"`      //图链接
 
-        uri:wx/addQueue
+        uri:wx/addWxList
         method:post
-        params:{"id":"","source_url":"11","url":1,"title":1,"ptime":"","biz":"","digest":"","original":"","cover":""}
+        //url，title 和biz ptime是必传参数
+        params:{"source_url":"11","url":1,"title":1,"ptime":"","biz":"","digest":"","original":"","cover":""}
         read_count:阅读数 类型:int
         thumb_count:点赞数:类型  int
 
@@ -91,7 +93,9 @@ TODO
 
 五:获取抓取列表新信息(近七天的):
     url:wx/nearly7Day
-    paramm:{"biz":"",pn:1,ps:1}//pn页码 ps每页多少条
+    paramm:{"biz":"",pn:1,ps:1}
+    biz不传递，就是获取所有公号的数据(每页200条),如果传递就是获取某一个公号的数据(200条每页)
+    //pn页码 ps每页多少条
     method:post
     返回值:
           返回值:

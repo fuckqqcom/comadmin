@@ -108,7 +108,7 @@ func (d Dao) Delete(interface{}, interface{}) int {
 
 func (d Dao) Exist(bean interface{}, m map[string]interface{}) bool {
 	switch t := bean.(type) {
-	case *wx.WeiXinCount:
+	case *wx.WeiXinCount, *wx.WeiXinList:
 		return d.existRecord(t)
 	default:
 		return false

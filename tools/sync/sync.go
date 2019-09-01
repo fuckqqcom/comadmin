@@ -19,7 +19,7 @@ func main() {
 	//config.EngDb.Sync2(new(wx.WeiXinList))
 	//config.EngDb.Sync2(new(wx.UserWx))
 	//updateJob
-	config.EngDb.Sync2(new(wx.Job))
+	config.EngDb.Sync2(new(wx.WeiXinList))
 
 	//角色相关
 	//config.EngDb.Sync2(new(admin.Role))

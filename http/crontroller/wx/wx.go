@@ -6,7 +6,7 @@ import (
 	"comadmin/pkg/e"
 	"comadmin/tools/utils"
 	"net/http"
-	"regexp"
+	"strings"
 )
 
 /**
@@ -169,6 +169,12 @@ func (h HttpWxHandler) ReadAndThumbCount(c app.GContext) {
 		"article_id": p.ArticleId,
 	}
 
+	if len(cols) == 0 {
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+
 	wxCount := wx.WeiXinCount{Biz: p.Biz, ArticleId: p.ArticleId}
 	query := wxCount
 	wxCount.ReadCount = p.ReadCount
@@ -221,10 +227,9 @@ func (h HttpWxHandler) AddWxList(c app.GContext) {
 	}
 	//http://mp.weixin.qq.com/s?__biz=MzU3ODE2NTMxNQ==&mid=2247485961&idx=1
 	//biz=(\w*).*?mid=(\w*)\w+&idx=(\d+)
-	compile := regexp.MustCompile(`biz=(\w*).*?mid=(\w*)\w+&idx=(\d+)`)
-	ids := compile.FindAllString(p.Url, -1)
-	if len(ids) > 0 {
-		p.HashId = utils.EncodeMd5(ids[0])
+	ids := utils.FindBizStr(p.Url)
+	if ids != nil {
+		p.HashId = utils.EncodeMd5(strings.Join(ids, "_"))
 	} else {
 		//log  url 提取idx等参数异常
 		code = e.ParamError
