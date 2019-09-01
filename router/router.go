@@ -3,6 +3,7 @@ package router
 import (
 	"comadmin/http/crontroller/admin"
 	"comadmin/http/crontroller/wx"
+	"github.com/DeanThompson/ginpprof"
 	"github.com/gin-gonic/gin"
 )
 
@@ -96,5 +97,6 @@ func NewRouter(path string) *gin.Engine {
 		//获取近七天的文章列表
 		//weiXin.GET("/nearly7Day", r.Nearly7Day)
 	}
+	ginpprof.Wrapper(r.Engine)
 	return r.Engine
 }
