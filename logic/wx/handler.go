@@ -9,57 +9,61 @@ type LogicHandler interface {
 	logicHandler
 }
 
+/**
+map[string]interface
+UpdateIterface
+*/
 type jobHandler interface {
-	FindCountByIdAndIp(id, ip string) int
 	Register(interface{}) (interface{}, int)
-	FindList(interface{}, int, int) (interface{}, int)
 }
 
 type logicHandler interface {
-	Create(interface{}) int //添加数据接口
-	Update(interface{}, []string) int
-	FindBiz(string) (interface{}, int) //获取公号信息
-	FindApi() (interface{}, int)       //获取接口
-	PostData(interface{}) int          //提交数据接口
-	Find(interface{}, int, int) (interface{}, interface{})
+	Create(interface{}) int                                        //添加数据接口
+	Update(interface{}, []string, map[string]interface{}) int      //更新那些字段
+	List(interface{}, int, int) (interface{}, interface{})         //第一参数是model对象 ，第二个是ps，第三个是pn
+	Exist(interface{}, map[string]interface{}) bool                //判断是否存在
+	Delete(interface{}, interface{}) int                           //删除  ids可以只一个 可以是多个
+	Get(interface{}, []string, map[string]interface{}) interface{} //查询单个对象,返回对象
+
+	//CreateOrDiscard(interface{}, []string, map[string]interface{}) int //创建 如果存在就丢弃
 }
 type Logic struct {
 	Db wxd.DbHandler
 }
 
-func (l Logic) FindCountByIdAndIp(id, ip string) int {
-	return l.Db.FindCountByIdAndIp(id, ip)
+func (l Logic) Get(bean interface{}, cols []string, colsValue map[string]interface{}) interface{} {
+	return l.Db.Get(bean, cols, colsValue)
 }
 
-func (l Logic) Register(i interface{}) (interface{}, int) {
-	return l.Db.Register(i)
+func (l Logic) Exist(bean interface{}, m map[string]interface{}) bool {
+	return l.Db.Exist(bean, m)
 }
 
-func (l Logic) Create(i interface{}) int {
-	return l.Db.Create(i)
+//func (l Logic) CreateOrDiscard(bean interface{}, cols []string, colsValue map[string]interface{}) int {
+//	return l.Db.CreateOrDiscard(bean, cols, colsValue)
+//}
+
+func (l Logic) Create(bean interface{}) int {
+	return l.Db.Create(bean)
 }
 
-func (l Logic) FindBiz(id string) (interface{}, int) {
-	return l.Db.FindBiz(id)
+func (l Logic) List(bean interface{}, pn, ps int) (interface{}, interface{}) {
+	return l.Db.List(bean, pn, ps)
 }
 
-func (l Logic) FindApi() (interface{}, int) {
-	return l.Db.FindApi()
+/**
+bean对应model，ids对应id列表
+*/
+func (l Logic) Delete(bean interface{}, ids interface{}) int {
+	return l.Db.Delete(bean, ids)
 }
 
-func (l Logic) PostData(i interface{}) int {
-	return l.Db.PostData(i)
+func (l Logic) Update(bean interface{}, cols []string, m map[string]interface{}) int {
+	return l.Db.Update(bean, cols, m)
 }
 
-func (l Logic) Find(i interface{}, pn, ps int) (interface{}, interface{}) {
-	return l.Db.Find(i, pn, ps)
-}
-
-func (l Logic) FindList(i interface{}, pn, ps int) (interface{}, int) {
-	return l.Db.FindList(i, pn, ps)
-}
-func (l Logic) Update(i interface{}, cols []string) int {
-	return l.Db.Update(i, cols)
+func (l Logic) Register(bean interface{}) (interface{}, int) {
+	return l.Db.Register(bean)
 }
 
 var _ LogicHandler = Logic{}

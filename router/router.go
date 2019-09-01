@@ -42,30 +42,59 @@ func NewRouter(path string) *gin.Engine {
 
 	weiXin := g.Group("/wx")
 	{
+		//提交点赞和阅读量数据接口  readAndThumbCount
+		weiXin.POST("/readAndThumbCount", r.ReadAndThumbCount)
 		//获取所有biz和name信息
-		weiXin.GET("/biz", r.FindBiz)
+		weiXin.GET("/getBiz", r.GetBiz)
+
 		//获取点赞等接口
-		weiXin.GET("/api", r.FindApi)
-		//提交点赞和阅读量数据接口
-		weiXin.POST("/post", r.PostData)
-		//详情页入库接口
-		weiXin.POST("/detail", r.AddDetail)
-		//入队列(列表数据入库)
-		weiXin.POST("/addQueue", r.AddQueue)
-		//获取队列任务(默认是5个job)
-		weiXin.GET("/pop", r.PopQueue)
-		//用户添加wx号
-		weiXin.POST("/addWx", r.UserAddWx)
-		//后台添加公号
-		weiXin.POST("/wx", r.AddWx)
-		//查询数据接口
-		weiXin.POST("/find", r.FindDetail)
-		//job注册
-		weiXin.POST("/registerJob", r.RegisterJob)
-		//更新job
-		weiXin.POST("/updateJob", r.UpdateJob)
+		weiXin.GET("/getApi", r.GetApi)
+
 		//获取近七天的文章列表
 		weiXin.GET("/nearly7Day", r.Nearly7Day)
+		//详情页入库
+		weiXin.POST("/addDetail", r.AddDetail)
+		//入队列(列表数据入库)
+		weiXin.POST("/addWxList", r.AddWxList)
+
+		//获取队列任务(默认是5个job)
+		weiXin.GET("/getTasks", r.GetTasks)
+		//用户添加wx号
+		weiXin.POST("/addUserWx", r.UserAddWx)
+		//后台添加公号
+		weiXin.POST("/addAdminWx", r.AddWx)
+		//查询数据接口
+		weiXin.POST("/getDetail", r.GetDetail)
+
+		//job注册
+		weiXin.POST("/registerJob", r.RegisterJob)
+
+		//更新job 待测试
+		weiXin.POST("/updateJob", r.UpdateJob)
+
+		////获取所有biz和name信息
+		//weiXin.GET("/biz", r.FindBiz)
+		//获取点赞等接口
+		//weiXin.GET("/api", r.FindApi)
+		//提交点赞和阅读量数据接口  readAndThumbCount
+		//weiXin.POST("/post", r.ReadAndThumbCount)
+		//详情页入库接口
+		//weiXin.POST("/detail", r.AddDetail)
+
+		//获取队列任务(默认是5个job)
+		//weiXin.GET("/pop", r.PopQueue)
+		//用户添加wx号
+		//weiXin.POST("/addWx", r.UserAddWx)
+		//后台添加公号
+		//weiXin.POST("/wx", r.AddWx)
+		//查询数据接口
+		//weiXin.POST("/find", r.FindDetail)
+		//job注册
+		//weiXin.POST("/registerJob", r.RegisterJob)
+		//更新job
+		//weiXin.POST("/updateJob", r.UpdateJob)
+		//获取近七天的文章列表
+		//weiXin.GET("/nearly7Day", r.Nearly7Day)
 	}
 	return r.Engine
 }

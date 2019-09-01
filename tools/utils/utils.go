@@ -15,12 +15,50 @@ const (
 	str = `(?:')|(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|(\b(select|update|and|or|delete|insert|trancate|char|chr|into|substr|ascii|declare|exec|count|master|into|drop|execute)\b)`
 )
 
+/**
+pageSize:每页展示多少
+pageNum:页码
+defaultPageSize:默认每页展示多少
+*/
+
+func Pagination(pageSize, pageNum, defaultPageSize int) (ps, pn int) {
+
+	if pageNum <= 1 {
+		pn = 1
+	} else {
+		pn = pageNum
+	}
+
+	if pageSize <= 0 || pageSize >= defaultPageSize {
+		ps = defaultPageSize
+	} else {
+		ps = pageSize
+	}
+	return
+}
+
 func CheckError(err error, v interface{}) bool {
 	if err != nil {
 		log.Printf("err is %s,%s", err, v)
 		return false
 	}
 	return true
+}
+
+func QueryCols(m map[string]interface{}) (query string, value []interface{}) {
+	count := 0
+	if m != nil {
+		for k, v := range m {
+			if count == 0 {
+				query += k + " = ? "
+			} else {
+				query += " and " + k + " = ? "
+			}
+			value = append(value, v)
+			count += 1
+		}
+	}
+	return
 }
 
 func EncodeMd5(value string) string {

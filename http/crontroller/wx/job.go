@@ -5,6 +5,7 @@ import (
 	"comadmin/pkg/app"
 	"comadmin/pkg/e"
 	"comadmin/tools/utils"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -20,15 +21,9 @@ func (h HttpWxHandler) AddDetail(c app.GContext) {
 		Text      string `json:"text"  binding:"required" `       //正文
 		TextStyle string `json:"text_style"  binding:"required" ` //带样式的正文
 		Biz       string `json:"biz"  binding:"required" `        //biz
-		//Ctime     time.Time `json:"ctime"`      //入库时间
-		//Mtime     time.Time `json:"mtime"`      //修改时间
-		Ptime  string `json:"ptime" binding:"required" `  //发布时间
-		Author string `json:"author" binding:"required" ` //作者
-		From   string `json:"from"  binding:"required"`
-		//Original int       `json:"original" binding:"required"` //原创
-		//WordCloud string    `json:"word_cloud"` //词云数据
-		//Summary   string    `json:"summary"`    //摘要
-		//Forbid    int       `json:"forbid"`     //公号是否被微信官方搞事了
+		Ptime     string `json:"ptime" binding:"required" `       //发布时间
+		Author    string `json:"author" binding:"required" `      //作者
+		From      string `json:"from"  binding:"required"`
 	}
 
 	g := app.G{c}
@@ -68,8 +63,18 @@ func (h HttpWxHandler) RegisterJob(c app.GContext) {
 		return
 	}
 	job := wx.Job{Id: p.Id, IP: p.Ip}
-	id, code := h.logic.Register(job)
+	id := utils.EncodeMd5(p.Ip)
+	if !h.logic.Exist(&job, nil) {
+		job.Id = id
+		job.Status = 1 //在线状态
+		job.Count = 1
+		code = h.logic.Create(job)
+	} else {
+		code = e.ExistError
+
+	}
 	g.Json(http.StatusOK, code, id)
+
 	return
 
 }
@@ -88,15 +93,23 @@ func (h HttpWxHandler) UpdateJob(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	count := h.logic.FindCountByIdAndIp(p.Id, p.Ip)
-	if count == 0 {
+	job := wx.Job{Id: p.Id, IP: p.Ip}
+
+	count := h.logic.Get(&job, []string{"count"}, nil)
+	bean := count.(*wx.Job)
+	if bean.Count == 0 {
 		code = e.JobError
 		g.Json(http.StatusOK, code, "")
 		return
 	}
+	fmt.Println(count)
+	//这一层在dao层做
 	cols := []string{"count", "etime", "status"}
-	job := wx.Job{Id: p.Id, IP: p.Ip, Etime: time.Now().Local(), Count: count + 1, Status: -1}
-	code = h.logic.Update(job, cols)
+	//job := wx.Job{Id: p.Id, IP: p.Ip, Etime: time.Now().Local(), Count: count + 1, Status: -1}
+	job.Etime = time.Now().Local()
+	job.Count = bean.Count + 1
+	job.Status = -1
+	code = h.logic.Update(job, cols, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 }

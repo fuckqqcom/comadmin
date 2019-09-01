@@ -6,6 +6,7 @@ import (
 	"comadmin/pkg/e"
 	"comadmin/tools/utils"
 	"net/http"
+	"regexp"
 )
 
 /**
@@ -27,18 +28,20 @@ func (h HttpWxHandler) AddWx(c app.GContext) {
 		return
 	}
 	xin := wx.WeiXin{}
-
-	if p.Name != "" {
-		xin.Name = p.Name
-	}
 	if p.Biz != "" {
 		xin.Biz = p.Biz
 	}
-	if p.Desc != "" {
-		xin.Biz = p.Biz
+	if p.Name != "" {
+		xin.Name = p.Name
 	}
-	xin.Forbid = 1
-	code = h.logic.Create(xin)
+
+	if !h.logic.Exist(&xin, nil) {
+		xin.Biz = p.Biz
+		xin.Forbid = 1
+		code = h.logic.Create(xin)
+	} else {
+		code = e.ExistError
+	}
 	g.Json(http.StatusOK, code, "")
 	return
 
@@ -62,7 +65,7 @@ func (h HttpWxHandler) ForBidWx(c app.GContext) {
 	xin := wx.WeiXin{Biz: p.Biz, Forbid: -1}
 	cols := []string{"forbid"}
 
-	code = h.logic.Update(xin, cols)
+	code = h.logic.Update(xin, cols, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -82,18 +85,27 @@ func (h HttpWxHandler) UserAddWx(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	xin := wx.UserWx{Uid: p.Uid, Name: p.Name}
-	xin.Status = 0
-	code = h.logic.Create(xin)
+	xin := wx.UserWx{Name: p.Name}
+	//Uid: p.Uid,
+	if !h.logic.Exist(&xin, nil) {
+		xin.Uid = p.Uid
+		xin.Status = 0
+		code = h.logic.Create(xin)
+	} else {
+		code = e.ExistError
+	}
+
 	g.Json(http.StatusOK, code, "")
 	return
 }
 
 //获取所有biz信息
-func (h HttpWxHandler) FindBiz(c app.GContext) {
+func (h HttpWxHandler) GetBiz(c app.GContext) {
 
 	type params struct {
 		MobileId string `json:"mobile_id"  binding:"required"` //手机id
+		Ps       int    `json:"ps"`
+		Pn       int    `json:"pn"`
 	}
 	g := app.G{c}
 
@@ -104,8 +116,9 @@ func (h HttpWxHandler) FindBiz(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
+	ps, pn := utils.Pagination(p.Ps, p.Pn, 200)
 
-	biz, count := h.logic.FindBiz(p.MobileId)
+	biz, count := h.logic.List(p.MobileId, ps, pn)
 	m := make(map[string]interface{})
 	m["list"] = biz
 	m["count"] = count
@@ -114,10 +127,11 @@ func (h HttpWxHandler) FindBiz(c app.GContext) {
 }
 
 //获取点赞和阅读接口
-func (h HttpWxHandler) FindApi(c app.GContext) {
+func (h HttpWxHandler) GetApi(c app.GContext) {
 	g := app.G{c}
 
-	biz, count := h.logic.FindApi()
+	api := wx.Api{}
+	biz, count := h.logic.List(api, 20, 0)
 	m := make(map[string]interface{})
 	m["list"] = biz
 	m["count"] = count
@@ -125,7 +139,7 @@ func (h HttpWxHandler) FindApi(c app.GContext) {
 	return
 }
 
-func (h HttpWxHandler) PostData(c app.GContext) {
+func (h HttpWxHandler) ReadAndThumbCount(c app.GContext) {
 	type params struct {
 		Biz        string `json:"biz"  binding:"required"`
 		ArticleId  string `json:"article_id"  binding:"required"`
@@ -138,19 +152,41 @@ func (h HttpWxHandler) PostData(c app.GContext) {
 
 	var p params
 	code := e.Success
-	if !utils.CheckError(c.ShouldBindJSON(&p), "createDomain") {
+	if !utils.CheckError(c.ShouldBindJSON(&p), "ReadAndThumbCount") {
 		code = e.ParamError
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	wxCount := wx.WeiXinCount{Biz: p.Biz, ArticleId: p.ArticleId, ReadCount: p.ReadCount, ThumbCount: p.ThumbCount}
-	code = h.logic.PostData(wxCount)
+	cols := make([]string, 0)
+	if p.ReadCount != 0 {
+		cols = append(cols, "read_count")
+	}
+	if p.ThumbCount != 0 {
+		cols = append(cols, "thumb_count")
+	}
+	colsValue := map[string]interface{}{
+		"biz":        p.Biz,
+		"article_id": p.ArticleId,
+	}
+
+	wxCount := wx.WeiXinCount{Biz: p.Biz, ArticleId: p.ArticleId}
+	query := wxCount
+	wxCount.ReadCount = p.ReadCount
+	wxCount.ThumbCount = p.ThumbCount
+	if h.logic.Exist(&query, nil) {
+		code = h.logic.Update(wxCount, cols, colsValue)
+	} else {
+		code = h.logic.Create(wxCount)
+	}
+
+	//wxCount := wx.WeiXinCount{Biz: p.Biz, ArticleId: p.ArticleId, ReadCount: p.ReadCount, ThumbCount: p.ThumbCount}
+	//code = h.logic.CreateOrUpdate(wxCount, cols, colsValue)
 	g.Json(http.StatusOK, code, "")
 	return
 }
 
 //前端查询接口
-func (h HttpWxHandler) FindDetail(c app.GContext) {
+func (h HttpWxHandler) GetDetail(c app.GContext) {
 	g := app.G{c}
 
 	var p wx.WeiXinParams
@@ -160,16 +196,9 @@ func (h HttpWxHandler) FindDetail(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
+	ps, pn := utils.Pagination(p.Ps, p.Pn, 200)
 
-	if p.Pn <= 1 {
-		p.Pn = 1
-	}
-
-	if p.Ps <= 0 || p.Ps > 50 {
-		p.Ps = 50
-	}
-
-	list, count := h.logic.Find(p, p.Pn, p.Ps)
+	list, count := h.logic.List(p, ps, pn)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list
@@ -180,17 +209,40 @@ func (h HttpWxHandler) FindDetail(c app.GContext) {
 /**
 入队列
 */
-func (h HttpWxHandler) AddQueue(c app.GContext) {
+func (h HttpWxHandler) AddWxList(c app.GContext) {
 	g := app.G{c}
 
 	var p wx.WeiXinList
 	code := e.Success
-	if !utils.CheckError(c.ShouldBindJSON(&p), "updateDomain") {
+	if !utils.CheckError(c.ShouldBindJSON(&p), "AddWxList") {
 		code = e.ParamError
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	code = h.logic.Create(p)
+	//http://mp.weixin.qq.com/s?__biz=MzU3ODE2NTMxNQ==&mid=2247485961&idx=1
+	//biz=(\w*).*?mid=(\w*)\w+&idx=(\d+)
+	compile := regexp.MustCompile(`biz=(\w*).*?mid=(\w*)\w+&idx=(\d+)`)
+	ids := compile.FindAllString(p.Url, -1)
+	if len(ids) > 0 {
+		p.HashId = utils.EncodeMd5(ids[0])
+	} else {
+		//log  url 提取idx等参数异常
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+
+	m := make(map[string]interface{})
+	m["hash_id"] = p.HashId
+	//todo 先查询hashId是否存在，存在就不入库，不存在就存在入库
+	query := wx.WeiXinList{HashId: p.HashId}
+	if !h.logic.Exist(&query, m) {
+		code = h.logic.Create(p)
+	} else {
+		code = e.ExistError
+	}
+
+	//code = h.logic.CreateOrDiscard(p, nil, m)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -199,7 +251,7 @@ func (h HttpWxHandler) AddQueue(c app.GContext) {
 获取队列数据
 */
 
-func (h HttpWxHandler) PopQueue(c app.GContext) {
+func (h HttpWxHandler) GetTasks(c app.GContext) {
 
 	type params struct {
 		Num int `json:"num"`
@@ -215,7 +267,7 @@ func (h HttpWxHandler) PopQueue(c app.GContext) {
 	}
 
 	xinList := wx.WeiXinList{}
-	list, count := h.logic.Find(xinList, p.Num, 0)
+	list, count := h.logic.List(xinList, p.Num, 0)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list
@@ -228,15 +280,10 @@ func (h HttpWxHandler) PopQueue(c app.GContext) {
 */
 
 func (h HttpWxHandler) Nearly7Day(c app.GContext) {
-	type params struct {
-		Pn  int    `json:"pn"`
-		Biz string `json:"biz"`
-		Ps  int    `json:"ps"`
-	}
 
 	g := app.G{c}
 
-	var p params
+	var p wx.Nearly7Day
 	code := e.Success
 	if !utils.CheckError(c.ShouldBindJSON(&p), "updateDomain") {
 		code = e.ParamError
@@ -244,15 +291,17 @@ func (h HttpWxHandler) Nearly7Day(c app.GContext) {
 		return
 	}
 
-	if p.Pn <= 1 {
-		p.Pn = 1
-	}
+	/**
+	如果biz为空,则查询全部的
+	否则查询某一个公号的
+	*/
+	ps, pn := utils.Pagination(p.Ps, p.Pn, 200)
+	w := wx.WeiXinList{}
 
-	if p.Ps <= 0 || p.Ps > 50 {
-		p.Ps = 200
+	if p.Biz != "" {
+		w.Biz = p.Biz
 	}
-	w := wx.WeiXinList{Biz: p.Biz}
-	list, count := h.logic.FindList(w, p.Pn, p.Ps)
+	list, count := h.logic.List(w, ps, pn)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list

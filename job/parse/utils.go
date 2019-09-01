@@ -11,12 +11,6 @@ import (
 	"time"
 )
 
-/**
-获取任务
-*/
-
-//http请求
-
 type Request struct {
 	Id          string
 	Url         string

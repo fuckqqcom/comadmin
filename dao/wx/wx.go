@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func (d Dao) findBizList(mobileId string) (interface{}, int) {
+func (d Dao) findBizList(mobileId string, ps, pn int) (interface{}, int) {
 	type WeiXin struct {
 		Id   string `json:"id"`
 		Biz  string `json:"biz"`
@@ -20,22 +20,29 @@ func (d Dao) findBizList(mobileId string) (interface{}, int) {
 	}
 
 	w := make([]WeiXin, 0)
-	sql := "select * from wei_xin where 1=1 "
+	sql := "select * from wei_xin where 1 = 1 "
 	if mobileId != "" {
 		sql += fmt.Sprintf(" and mobile_id = '%s'", mobileId)
 	}
-	count, err := d.engine.SQL(sql).OrderBy("mtime desc ").FindAndCount(&w)
+	count, err := d.engine.SQL(sql).Limit(ps, (pn-1)*ps).OrderBy("mtime desc ").FindAndCount(&w)
 	if utils.CheckError(err, count) {
 		return w, int(count)
 	}
 	return nil, 0
 }
 
-func (d Dao) findApi() (interface{}, int) {
+func (d Dao) findApi(ps, pn int) (interface{}, int) {
 
-	w := make([]wx.Api, 0)
+	type Api struct {
+		Id       string `json:"id"`
+		Name     string `json:"name"`
+		Url      string `json:"url"`
+		Category int    `json:"category"` // 1是阅读点赞接口  2是详情接口 3是其他接口等
+	}
 
-	count, err := d.engine.FindAndCount(&w)
+	w := make([]Api, 0)
+
+	count, err := d.engine.Limit(ps, (pn-1)*ps).FindAndCount(&w)
 	if utils.CheckError(err, count) {
 		return w, int(count)
 	}
@@ -68,7 +75,7 @@ func (d Dao) insertArticleList(bean interface{}) int {
 	return e.Errors
 }
 
-func (d Dao) wxList(list wx.WeiXinList, pn, ps int) (interface{}, int) {
+func (d Dao) wxNearly7Day(list wx.Nearly7Day, ps, pn int) (interface{}, int) {
 	sql := "select biz , url from wei_xin_list where 1=1  "
 	if list.Biz != "" {
 		sql += fmt.Sprintf(" and biz = '%s'", list.Biz)
@@ -87,7 +94,7 @@ func (d Dao) wxList(list wx.WeiXinList, pn, ps int) (interface{}, int) {
 }
 
 //查询数据
-func (d Dao) findArticle(detail wx.WeiXinParams, pn, ps int) (interface{}, interface{}) {
+func (d Dao) findArticle(detail wx.WeiXinParams, ps, pn int) (interface{}, interface{}) {
 	/**
 	这里拼接es sql
 

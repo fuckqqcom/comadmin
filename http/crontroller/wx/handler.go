@@ -5,6 +5,7 @@ import (
 )
 
 type HttpWxHandler struct {
+	//todo log
 	logic wx.LogicHandler
 }
 

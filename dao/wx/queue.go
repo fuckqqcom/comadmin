@@ -29,7 +29,7 @@ func (d Dao) addQueue(l wx.WeiXinList) int {
 		return code
 	}
 	type Params struct {
-		Id       string    `json:"id"`
+		Id       int64     `json:"id"`
 		Title    string    `json:"title"`
 		Url      string    `json:"url"`
 		Original int       `json:"origin"`
