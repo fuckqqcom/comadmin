@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  redis:
+ redis:
     image: redis
     restart: always
     ports:
@@ -9,19 +9,17 @@ services:
     volumes:
       - /home/xiaohan/docker/redis/data:/data
       - /home/xiaohan/docker/redis/conf/:/etc/redis/
-    command: redis-server  /etc/redis/redis.conf --appendonly yes 
-
-  # mongo:
-    # image: mongo
-    # restart: always
-    # ports:
-      # - 27017:27017
-    # volumes:
-      # - /home/xiaohan/docker/mongo/db:/data/db
-    # command: mongod --auth
-    # tty: true
-
-  mysql:
+    command: redis-server  /etc/redis/redis.conf --appendonly yes
+ mongo:
+   image: mongo
+   restart: always
+   ports:
+     - 27017:27017
+   volumes:
+     - /home/xiaohan/docker/mongo/db:/data/db
+   command: mongod --auth
+   tty: true
+ mysql:
     image: mysql
     restart: always
     ports:
@@ -36,7 +34,7 @@ services:
     environment:
       {"MYSQL_ROOT_PASSWORD": "abc123456"}
       
-  nginx:
+ nginx:
     image: nginx
     restart: always
     ports:
@@ -49,7 +47,7 @@ services:
       - /home/xiaohan/docker/nginx/key:/etc/key
     tty: true
   
-  elasticsearch01:
+ elasticsearch01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.3.1
     restart: always
     container_name: es01

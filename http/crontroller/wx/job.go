@@ -5,7 +5,6 @@ import (
 	"comadmin/pkg/app"
 	"comadmin/pkg/e"
 	"comadmin/tools/utils"
-	"fmt"
 	"net/http"
 	"time"
 )
@@ -39,7 +38,7 @@ func (h HttpWxHandler) AddDetail(c app.GContext) {
 
 	detail := wx.WeiXinDetail{Id: p.Id, Title: p.Title, Text: p.Text, TextStyle: p.TextStyle, Biz: p.Biz,
 		Ptime: utils.Str2Time(t, p.Ptime), Author: p.Author, Forbid: 1, Ctime: time.Now().Local(), Mtime: time.Now().Local()}
-	h.logic.Create(detail)
+	h.logic.Add(detail)
 	g.Json(http.StatusOK, code, "")
 	return
 
@@ -48,7 +47,7 @@ func (h HttpWxHandler) AddDetail(c app.GContext) {
 /**
 注册job任务
 */
-func (h HttpWxHandler) RegisterJob(c app.GContext) {
+func (h HttpWxHandler) OnlineJob(c app.GContext) {
 	type params struct {
 		Id string `json:"id" ` //第一次注册的时候 id为kong
 		Ip string `json:"ip" binding:"required" `
@@ -62,24 +61,35 @@ func (h HttpWxHandler) RegisterJob(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	job := wx.Job{Id: p.Id, IP: p.Ip}
+	job := wx.Job{Id: p.Id, Ip: p.Ip}
 	id := utils.EncodeMd5(p.Ip)
-	if !h.logic.Exist(&job, nil) {
+
+	/**
+	先查询是否存在,不存在就创建
+	存在就更新字段
+	*/
+	inter := h.logic.Get(&job, []string{"count"}, nil)
+	if inter == nil {
 		job.Id = id
 		job.Status = 1 //在线状态
 		job.Count = 1
-		code = h.logic.Create(job)
+		code = h.logic.Add(job)
 	} else {
-		code = e.ExistError
-
+		bean := inter.(*wx.Job)
+		cols := []string{"count", "etime", "status"}
+		job.Etime = time.Now().Local()
+		job.Count = bean.Count + 1
+		job.Status = 1
+		queryMap := make(map[string]interface{})
+		queryMap[" id = "] = id
+		code = h.logic.Update(job, cols, queryMap)
 	}
 	g.Json(http.StatusOK, code, id)
-
 	return
 
 }
 
-func (h HttpWxHandler) UpdateJob(c app.GContext) {
+func (h HttpWxHandler) OfflineJob(c app.GContext) {
 	type params struct {
 		Id string `json:"id" binding:"required" `
 		Ip string `json:"ip" binding:"required" `
@@ -93,23 +103,14 @@ func (h HttpWxHandler) UpdateJob(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	job := wx.Job{Id: p.Id, IP: p.Ip}
-
-	count := h.logic.Get(&job, []string{"count"}, nil)
-	bean := count.(*wx.Job)
-	if bean.Count == 0 {
-		code = e.JobError
-		g.Json(http.StatusOK, code, "")
-		return
-	}
-	fmt.Println(count)
+	job := wx.Job{Id: p.Id, Ip: p.Ip}
 	//这一层在dao层做
-	cols := []string{"count", "etime", "status"}
-	//job := wx.Job{Id: p.Id, IP: p.Ip, Etime: time.Now().Local(), Count: count + 1, Status: -1}
+	cols := []string{"etime", "status"}
 	job.Etime = time.Now().Local()
-	job.Count = bean.Count + 1
 	job.Status = -1
-	code = h.logic.Update(job, cols, nil)
+	queryMap := make(map[string]interface{})
+	queryMap[" id = "] = p.Id
+	code = h.logic.Update(job, cols, queryMap)
 	g.Json(http.StatusOK, code, "")
 	return
 }

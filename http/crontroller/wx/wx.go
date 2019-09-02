@@ -7,6 +7,7 @@ import (
 	"comadmin/tools/utils"
 	"net/http"
 	"strings"
+	"time"
 )
 
 /**
@@ -38,7 +39,7 @@ func (h HttpWxHandler) AddWx(c app.GContext) {
 	if !h.logic.Exist(&xin, nil) {
 		xin.Biz = p.Biz
 		xin.Forbid = 1
-		code = h.logic.Create(xin)
+		code = h.logic.Add(xin)
 	} else {
 		code = e.ExistError
 	}
@@ -90,7 +91,7 @@ func (h HttpWxHandler) UserAddWx(c app.GContext) {
 	if !h.logic.Exist(&xin, nil) {
 		xin.Uid = p.Uid
 		xin.Status = 0
-		code = h.logic.Create(xin)
+		code = h.logic.Add(xin)
 	} else {
 		code = e.ExistError
 	}
@@ -102,23 +103,20 @@ func (h HttpWxHandler) UserAddWx(c app.GContext) {
 //获取所有biz信息
 func (h HttpWxHandler) GetBiz(c app.GContext) {
 
-	type params struct {
-		MobileId string `json:"mobile_id"  binding:"required"` //手机id
-		Ps       int    `json:"ps"`
-		Pn       int    `json:"pn"`
-	}
 	g := app.G{c}
 
-	var p params
+	var p wx.BizParams
 	code := e.Success
 	if !utils.CheckError(c.ShouldBindJSON(&p), "userAddWx") {
 		code = e.ParamError
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	ps, pn := utils.Pagination(p.Ps, p.Pn, 200)
 
-	biz, count := h.logic.List(p.MobileId, ps, pn)
+	ps, pn := utils.Pagination(p.Ps, p.Pn, 200)
+	queryMap := make(map[string]interface{})
+	queryMap["mobile_id = "] = p.MobileId
+	biz, count := h.logic.FindOne(p, queryMap, ps, pn)
 	m := make(map[string]interface{})
 	m["list"] = biz
 	m["count"] = count
@@ -130,8 +128,9 @@ func (h HttpWxHandler) GetBiz(c app.GContext) {
 func (h HttpWxHandler) GetApi(c app.GContext) {
 	g := app.G{c}
 
-	api := wx.Api{}
-	biz, count := h.logic.List(api, 20, 0)
+	api := wx.ApiParams{}
+
+	biz, count := h.logic.FindOne(api, nil, 20, 0)
 	m := make(map[string]interface{})
 	m["list"] = biz
 	m["count"] = count
@@ -165,8 +164,8 @@ func (h HttpWxHandler) ReadAndThumbCount(c app.GContext) {
 		cols = append(cols, "thumb_count")
 	}
 	colsValue := map[string]interface{}{
-		"biz":        p.Biz,
-		"article_id": p.ArticleId,
+		"biz = ":        p.Biz,
+		"article_id = ": p.ArticleId,
 	}
 
 	if len(cols) == 0 {
@@ -182,11 +181,11 @@ func (h HttpWxHandler) ReadAndThumbCount(c app.GContext) {
 	if h.logic.Exist(&query, nil) {
 		code = h.logic.Update(wxCount, cols, colsValue)
 	} else {
-		code = h.logic.Create(wxCount)
+		code = h.logic.Add(wxCount)
 	}
 
 	//wxCount := wx.WeiXinCount{Biz: p.Biz, ArticleId: p.ArticleId, ReadCount: p.ReadCount, ThumbCount: p.ThumbCount}
-	//code = h.logic.CreateOrUpdate(wxCount, cols, colsValue)
+	//code = h.logic.AddOrUpdate(wxCount, cols, colsValue)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -204,7 +203,7 @@ func (h HttpWxHandler) GetDetail(c app.GContext) {
 	}
 	ps, pn := utils.Pagination(p.Ps, p.Pn, 200)
 
-	list, count := h.logic.List(p, ps, pn)
+	list, count := h.logic.FindOne(p, nil, ps, pn)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list
@@ -242,12 +241,12 @@ func (h HttpWxHandler) AddWxList(c app.GContext) {
 	//todo 先查询hashId是否存在，存在就不入库，不存在就存在入库
 	query := wx.WeiXinList{HashId: p.HashId}
 	if !h.logic.Exist(&query, m) {
-		code = h.logic.Create(p)
+		code = h.logic.Add(p)
 	} else {
 		code = e.ExistError
 	}
 
-	//code = h.logic.CreateOrDiscard(p, nil, m)
+	//code = h.logic.AddOrDiscard(p, nil, m)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -272,7 +271,7 @@ func (h HttpWxHandler) GetTasks(c app.GContext) {
 	}
 
 	xinList := wx.WeiXinList{}
-	list, count := h.logic.List(xinList, p.Num, 0)
+	list, count := h.logic.FindOne(xinList, nil, p.Num, 0)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list
@@ -299,14 +298,22 @@ func (h HttpWxHandler) Nearly7Day(c app.GContext) {
 	/**
 	如果biz为空,则查询全部的
 	否则查询某一个公号的
+
+		//sql := "select biz , url from wei_xin_list where 1=1  "
+	//if list.Biz != "" {
+	//	sql += fmt.Sprintf(" and biz = '%s'", list.Biz)
+	//}
+	//sql += fmt.Sprintf(" and ptime >= '%s' ", utils.Time2Str(time.Now().AddDate(0, 0, -7), "2006-01-02 15:04:05"))
 	*/
 	ps, pn := utils.Pagination(p.Ps, p.Pn, 200)
-	w := wx.WeiXinList{}
+	//w := wx.Nearly7Day{}
+	queryMap := make(map[string]interface{}, 0)
 
 	if p.Biz != "" {
-		w.Biz = p.Biz
+		queryMap["biz = "] = p.Biz
 	}
-	list, count := h.logic.List(w, ps, pn)
+	queryMap["ptime >= "] = utils.Time2Str(time.Now().AddDate(0, 0, -7), "2006-01-02 15:04:05")
+	list, count := h.logic.FindOne(p, queryMap, ps, pn)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list

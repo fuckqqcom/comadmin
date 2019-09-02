@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func (h HttpAdminHandler) CreateRole(c app.GContext) {
+func (h HttpAdminHandler) AddRole(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Name string `json:"name"  binding:"required"`
@@ -35,8 +35,8 @@ func (h HttpAdminHandler) CreateRole(c app.GContext) {
 	appRole := admin.DomainAppRole{Id: utils.EncodeMd5(utils.StringJoin(p.Did, p.Aid, p.Name)), Did: p.Did, Aid: p.Aid, Rid: role.Id}
 
 	//TODO  可以改成channel  goroutine
-	code = h.logic.Create(appRole)
-	code = h.logic.Create(role)
+	code = h.logic.Add(appRole)
+	code = h.logic.Add(role)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -60,8 +60,8 @@ func (h HttpAdminHandler) DeleteRole(c app.GContext) {
 	domain := admin.Role{Id: p.Id}
 	//删除关系表中的数据
 	role := admin.DomainAppRole{Rid: p.Id}
-	code = h.logic.Delete(role)
-	code = h.logic.Delete(domain)
+	code = h.logic.Delete(role, nil)
+	code = h.logic.Delete(domain, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -84,7 +84,7 @@ func (h HttpAdminHandler) UpdateRole(c app.GContext) {
 	cols := []string{"name"}
 	role := admin.Role{Id: p.Id}
 
-	code = h.logic.Update(role, cols)
+	code = h.logic.Update(role, cols, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -109,8 +109,8 @@ func (h HttpAdminHandler) ForbidRole(c app.GContext) {
 	appRole := admin.DomainAppRole{Rid: p.Id, Status: p.Status}
 
 	//同时两个表都更新
-	code = h.logic.Update(appRole, cols)
-	code = h.logic.Update(role, cols)
+	code = h.logic.Update(appRole, cols, nil)
+	code = h.logic.Update(role, cols, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -139,7 +139,7 @@ func (h HttpAdminHandler) FindRole(c app.GContext) {
 	}
 	role := admin.Role{Id: p.Id, Name: p.Name, Status: p.Status}
 
-	list, count := h.logic.Find(role, p.Pn, p.Ps)
+	list, count := h.logic.FindOne(role, nil, p.Pn, p.Ps)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list

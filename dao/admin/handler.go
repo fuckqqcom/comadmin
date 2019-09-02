@@ -10,20 +10,31 @@ import (
 
 type DbHandler interface {
 	Login(interface{}) int
-	Create(interface{}) int           //创建
-	Delete(interface{}) int           //删除
-	Update(interface{}, []string) int //修改
-	Find(i interface{}, pn, ps int) (interface{}, int)
+	Add(interface{}) int //创建
+	Delete(interface{}, map[string]interface{}) int
+	Update(interface{}, []string, map[string]interface{}) int                 //修改
+	FindOne(interface{}, map[string]interface{}, int, int) (interface{}, int) //查询,返回列表 map装载查询条件  单表查询
 	FindById(id interface{}) int
 } //查询
 
+type daoHandler interface {
+	Add(interface{}) int                                      //添加数据接口
+	Update(interface{}, []string, map[string]interface{}) int //修改
+	Delete(interface{}, map[string]interface{}) int
+	Exist(interface{}, map[string]interface{}) bool
+	FindOne(interface{}, map[string]interface{}, int, int) (interface{}, interface{}) //查询,返回列表 map装载查询条件  单表查询
+	Get(interface{}, []string, map[string]interface{}) interface{}                    //查询单个对象,返回对象
+	//AddOrUpdate(interface{}, []string, map[string]interface{}) int  //创建或者更新 存在就更新,不存在就创建
+	//AddOrDiscard(interface{}, []string, map[string]interface{}) int //创建 如果存在就丢弃
+}
+
 type Dao struct {
 	c      config.Config
-	Engine *xorm.Engine
+	engine *xorm.Engine
 }
 
 func NewDb(path string) *Dao {
-	return &Dao{Engine: config.EngDb, c: config.NewConfig(path)}
+	return &Dao{engine: config.EngDb, c: config.NewConfig(path)}
 }
 
 //接口   结构体
@@ -39,41 +50,41 @@ func (d Dao) Login(i interface{}) int {
 	}
 }
 
-func (d Dao) Create(i interface{}) int {
+func (d Dao) Add(i interface{}) int {
 	switch t := i.(type) {
 	case admin.Domain, admin.DomainApp, admin.User, admin.DomainAppUser:
-		return d.create(t)
+		return d.add(t)
 	default:
 		fmt.Println("create other ...")
 		return e.Errors
 	}
 }
 
-func (d Dao) Delete(i interface{}) int {
-	switch t := i.(type) {
+func (d Dao) Delete(bean interface{}, queryValue map[string]interface{}) int {
+	switch t := bean.(type) {
 	case admin.Domain:
-		return d.delete(t.Id, t)
-	case admin.DomainApp:
-		return d.delete(t.Id, t)
+		return d.delete(t, queryValue)
+	//case admin.DomainApp:
+	//	return d.delete(t.Id, t)
 	default:
 		fmt.Println("delete other ...")
 		return e.Errors
 	}
 }
 
-func (d Dao) Update(i interface{}, cols []string) int {
+func (d Dao) Update(bean interface{}, cols []string, queryValue map[string]interface{}) int {
 	//todo 怎么优化
-	switch t := i.(type) {
+	switch t := bean.(type) {
 	case admin.Domain:
-		return d.update(t.Id, t, cols...)
-	case admin.DomainApp:
-		return d.update(t.Id, t, cols...)
-	case admin.User:
-		return d.update(t.Id, t, cols...)
-	case admin.Role:
-		return d.update(t.Id, t, cols...)
-	case admin.DomainAppRole:
-		return d.update(t.Id, t, cols...)
+		return d.update(t, cols, queryValue)
+	//case admin.DomainApp:
+	//	return d.update(t.Id, t, cols...)
+	//case admin.User:
+	//	return d.update(t.Id, t, cols...)
+	//case admin.Role:
+	//	return d.update(t.Id, t, cols...)
+	//case admin.DomainAppRole:
+	//	return d.update(t.Id, t, cols...)
 
 	default:
 		fmt.Println("update other ...")
@@ -81,11 +92,20 @@ func (d Dao) Update(i interface{}, cols []string) int {
 	}
 }
 
-func (d Dao) Find(i interface{}, pn, ps int) (interface{}, int) {
+func (d Dao) FindOne(bean interface{}, m map[string]interface{}, ps, pn int) (interface{}, int) {
 
-	switch t := i.(type) {
+	switch t := bean.(type) {
 	case admin.Domain:
-		return d.findDomain(t, pn, ps)
+		type domain struct {
+			Name   string `json:"name"`
+			Id     string `json:"id"`
+			Status int    `json:"status"`
+			Ctime  string `json:"ctime" `
+			Mtime  string `json:"mtime" `
+		}
+		dm := make([]domain, 0)
+		return d.findOneTable(&dm, m, pn, ps)
+		//return d.findDomain(t, pn, ps)
 	case admin.DomainApp:
 		return d.findApp(t, pn, ps)
 	case admin.User:

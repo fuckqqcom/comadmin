@@ -40,7 +40,7 @@ func (d Dao) findApp(app admin.DomainApp, pn, ps int) (interface{}, int) {
 	if app.Status != 0 {
 		sql += fmt.Sprintf(" and status == %d ", app.Status)
 	}
-	count, err := d.Engine.SQL(sql).Limit(ps, (pn-1)*ps).FindAndCount(&ret)
+	count, err := d.engine.SQL(sql).Limit(ps, (pn-1)*ps).FindAndCount(&ret)
 	if !utils.CheckError(err, count) {
 		return nil, 0
 	}

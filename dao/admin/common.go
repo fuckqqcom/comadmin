@@ -10,17 +10,26 @@ import (
 */
 
 //删除 通过id删除
-func (d Dao) delete(id, bean interface{}) int {
-	affect, err := d.Engine.Where(" id = ? ", id).Delete(&bean)
-	if utils.CheckError(err, affect) {
+func (d Dao) delete(bean interface{}, m map[string]interface{}) int {
+	query, value := utils.QueryCols(m)
+	affect, err := d.engine.Where(query, value...).Delete(bean)
+	if utils.CheckError(err, affect) && affect >= 1 {
 		return e.Success
 	}
 	return e.Errors
 }
 
 //创建
-func (d Dao) create(bean interface{}) int {
-	affect, err := d.Engine.Insert(bean)
+//func (d Dao) create(bean interface{}) int {
+//	affect, err := d.Engine.Insert(bean)
+//	if utils.CheckError(err, affect) {
+//		return e.Success
+//	}
+//	return e.Errors
+//}
+
+func (d Dao) add(bean interface{}) int {
+	affect, err := d.engine.Insert(bean)
 	if utils.CheckError(err, affect) {
 		return e.Success
 	}
@@ -30,7 +39,7 @@ func (d Dao) create(bean interface{}) int {
 //通过id查找
 
 func (d Dao) findById(bean interface{}) int {
-	affect, err := d.Engine.Exist(bean)
+	affect, err := d.engine.Exist(bean)
 	if utils.CheckError(err, affect) && affect {
 		return e.Success
 	}
@@ -41,11 +50,29 @@ func (d Dao) findById(bean interface{}) int {
 用过id更新  name 和status状态
 */
 
-func (d Dao) update(id interface{}, bean interface{}, cols ...string) int {
-
-	affect, err := d.Engine.Where(" id = ? ", id).Cols(cols...).Update(bean)
-	if utils.CheckError(err, affect) {
+//func (d Dao) update(id interface{}, bean interface{}, cols ...string) int {
+//
+//	affect, err := d.engine.Where(" id = ? ", id).Cols(cols...).Update(bean)
+//	if utils.CheckError(err, affect) {
+//		return e.Success
+//	}
+//	return e.Errors
+//}
+func (d Dao) update(bean interface{}, cols []string, m map[string]interface{}) int {
+	query, value := utils.QueryCols(m)
+	affect, err := d.engine.Where(query, value...).Cols(cols...).Update(bean)
+	if utils.CheckError(err, affect) && affect >= 1 {
 		return e.Success
 	}
-	return e.Errors
+	return e.UpdateError
+}
+
+//单表查询
+func (d Dao) findOneTable(w interface{}, queryValue map[string]interface{}, ps, pn int) (interface{}, int) {
+	query, value := utils.QueryCols(queryValue)
+	count, err := d.engine.Where(query, value...).Limit(ps, (pn-1)*ps).FindAndCount(w)
+	if utils.CheckError(err, count) {
+		return w, int(count)
+	}
+	return nil, 0
 }

@@ -22,7 +22,7 @@ func (d Dao) findRole(r admin.Role, pn, ps int) (interface{}, int) {
 	if r.Status != 0 {
 		sql += fmt.Sprintf(" and status == %d ", r.Status)
 	}
-	count, err := d.Engine.SQL(sql).Limit(ps, (pn-1)*ps).FindAndCount(&ret)
+	count, err := d.engine.SQL(sql).Limit(ps, (pn-1)*ps).FindAndCount(&ret)
 	if !utils.CheckError(err, count) {
 		return nil, 0
 	}

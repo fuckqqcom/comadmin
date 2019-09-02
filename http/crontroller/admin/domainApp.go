@@ -12,7 +12,7 @@ import (
 /**
 创建应用app
 */
-func (h HttpAdminHandler) CreateDomainApp(c app.GContext) {
+func (h HttpAdminHandler) AddDomainApp(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Name string `json:"name"  binding:"required"`
@@ -33,7 +33,7 @@ func (h HttpAdminHandler) CreateDomainApp(c app.GContext) {
 		return
 	}
 	domainApp := admin.DomainApp{Name: p.Name, Did: p.Did, Id: utils.EncodeMd5(p.Name + p.Did), Status: 1}
-	code = h.logic.Create(domainApp)
+	code = h.logic.Add(domainApp)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -69,7 +69,7 @@ func (h HttpAdminHandler) UpdateDomainApp(c app.GContext) {
 		cols = append(cols, "status")
 
 	}
-	code = h.logic.Update(domainApp, cols)
+	code = h.logic.Update(domainApp, cols, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -88,7 +88,7 @@ func (h HttpAdminHandler) DeleteDomainApp(c app.GContext) {
 
 	}
 	domain := admin.DomainApp{Id: p.Id}
-	code = h.logic.Delete(domain)
+	code = h.logic.Delete(domain, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -121,7 +121,7 @@ func (h HttpAdminHandler) FindDomainApp(c app.GContext) {
 	}
 	domain := admin.DomainApp{Id: p.Id, Name: p.Name, Status: p.Status, Did: did.(string)}
 
-	list, count := h.logic.Find(domain, p.Pn, p.Ps)
+	list, count := h.logic.FindOne(domain, nil, p.Pn, p.Ps)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list

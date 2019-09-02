@@ -25,8 +25,8 @@ type daoHandler interface {
 	Update(interface{}, []string, map[string]interface{}) int //修改
 	Delete(interface{}, map[string]interface{}) int
 	Exist(interface{}, map[string]interface{}) bool
-	List(interface{}, map[string]interface{}, int, int) (interface{}, interface{}) //查询,返回列表 map装载查询条件  单表查询
-	Get(interface{}, []string, map[string]interface{}) interface{}                 //查询单个对象,返回对象
+	FindOne(interface{}, map[string]interface{}, int, int) (interface{}, interface{}) //查询,返回列表 map装载查询条件  单表查询
+	Get(interface{}, []string, map[string]interface{}) interface{}                    //查询单个对象,返回对象
 	//AddOrUpdate(interface{}, []string, map[string]interface{}) int  //创建或者更新 存在就更新,不存在就创建
 	//AddOrDiscard(interface{}, []string, map[string]interface{}) int //创建 如果存在就丢弃
 }
@@ -111,7 +111,7 @@ func (d Dao) Get(bean interface{}, cols []string, colsValue map[string]interface
 	}
 }
 
-func (d Dao) List(i interface{}, m map[string]interface{}, ps, pn int) (interface{}, interface{}) {
+func (d Dao) FindOne(i interface{}, m map[string]interface{}, ps, pn int) (interface{}, interface{}) {
 
 	switch t := i.(type) {
 	case wx.WeiXinParams:

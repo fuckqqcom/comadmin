@@ -14,21 +14,21 @@ func NewRouter(path string) *gin.Engine {
 	r.Use(gin.Recovery())
 	//r.Use(middleware.JWT())
 	g := r.Group("/v1")
-	//domain := g.Group("/domain")
-	//{
-	//	//域
-	//	domain.POST("/create", r.AddDomain)
-	//	domain.POST("/delete", r.DeleteDoDomain)
-	//	domain.POST("/find", r.FindDomainArgs)
-	//	domain.POST("/update", r.UpdateDomain)
-	//	//app
-	//	domain.POST("/createApp", r.AddDomainApp)
-	//	domain.POST("/updateApp", r.UpdateDomainApp)
-	//	domain.POST("/findApp", r.FindDomainApp)
-	//	domain.POST("/deleteApp", r.DeleteDomainApp)
-	//}
-	//
-	////用户操作
+	domain := g.Group("/d")
+	{
+		//域
+		domain.POST("/addDomain", r.AddDomain)
+		domain.POST("/deleteDomain", r.DeleteDoDomain)
+		domain.GET("/domains", r.Domains)
+		domain.POST("/editDomain", r.EditDomain)
+		////app
+		//domain.POST("/createApp", r.AddDomainApp)
+		//domain.POST("/updateApp", r.UpdateDomainApp)
+		//domain.POST("/findApp", r.FindDomainApp)
+		//domain.POST("/deleteApp", r.DeleteDomainApp)
+	}
+
+	//用户操作
 	//user := g.Group("/user")
 	//user.POST("/register", r.Register) //用户注册
 	//user.POST("/login", r.Login)       //用户登录

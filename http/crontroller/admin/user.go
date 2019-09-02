@@ -41,8 +41,8 @@ func (h HttpAdminHandler) Register(c app.GContext) {
 	appUser := admin.DomainAppUser{Id: utils.EncodeMd5(utils.StringJoin(p.Name, p.Did, p.Aid)), Did: p.Did, Aid: p.Aid, Uid: utils.EncodeMd5(utils.StringJoin(p.Name, p.Did, p.Aid)), Status: 1}
 
 	//todo 是否考虑开启一个goroutine去处理
-	code = h.logic.Create(appUser)
-	code = h.logic.Create(user)
+	code = h.logic.Add(appUser)
+	code = h.logic.Add(user)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -122,7 +122,7 @@ func (h HttpAdminHandler) RegisterAdminUser(c app.GContext) {
 		g.Json(http.StatusOK, code, "分配id异常")
 	}
 	user := admin.User{Name: p.Name, Id: utils.EncodeMd5(utils.StringJoin(p.Name, p.Did, p.Aid)), Did: p.Did, Aid: p.Aid, Pwd: utils.EncodeMd5(p.Pwd)}
-	code = h.logic.Create(user)
+	code = h.logic.Add(user)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -143,7 +143,7 @@ func (h HttpAdminHandler) DeleteUser(c app.GContext) {
 		return
 	}
 	domain := admin.User{Id: p.Id}
-	code = h.logic.Delete(domain)
+	code = h.logic.Delete(domain, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 
@@ -172,7 +172,7 @@ func (h HttpAdminHandler) UpdateUserPhone(c app.GContext) {
 	domain := admin.User{Id: p.Id, Phone: p.Phone}
 	cols := []string{"phone"}
 
-	code = h.logic.Update(domain, cols)
+	code = h.logic.Update(domain, cols, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -195,7 +195,7 @@ func (h HttpAdminHandler) UpdateUserPwd(c app.GContext) {
 	domain := admin.User{Id: p.Id, Pwd: utils.EncodeMd5(p.Pwd)}
 	cols := []string{"pwd"}
 
-	code = h.logic.Update(domain, cols)
+	code = h.logic.Update(domain, cols, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -218,7 +218,7 @@ func (h HttpAdminHandler) UpdateUserStatus(c app.GContext) {
 	domain := admin.User{Id: p.Id, Status: p.Status}
 	cols := []string{"status"}
 
-	code = h.logic.Update(domain, cols)
+	code = h.logic.Update(domain, cols, nil)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -239,7 +239,7 @@ func (h HttpAdminHandler) FindUser(c app.GContext) {
 	}
 	domain := admin.User{Id: p.Id, Name: p.Name, Status: p.Status, Phone: p.Phone, Did: p.Did, Aid: p.Aid}
 
-	list, count := h.logic.Find(domain, p.Pn, p.Ps)
+	list, count := h.logic.FindOne(domain, nil, p.Pn, p.Ps)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list

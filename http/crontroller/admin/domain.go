@@ -11,7 +11,7 @@ import (
 /**
 创建domain
 */
-func (h HttpAdminHandler) CreateDomain(c app.GContext) {
+func (h HttpAdminHandler) AddDomain(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Name string `json:"name"  binding:"required"`
@@ -24,7 +24,7 @@ func (h HttpAdminHandler) CreateDomain(c app.GContext) {
 		return
 	}
 	domain := admin.Domain{Name: p.Name, Id: utils.EncodeMd5(p.Name), Status: 1}
-	code = h.logic.Create(domain)
+	code = h.logic.Add(domain)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -47,8 +47,9 @@ func (h HttpAdminHandler) DeleteDoDomain(c app.GContext) {
 		return
 
 	}
-	domain := admin.Domain{Id: p.Id}
-	code = h.logic.Delete(domain)
+	domain := admin.Domain{}
+	queryMap := map[string]interface{}{" id = ": p.Id}
+	code = h.logic.Delete(domain, queryMap)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -57,7 +58,7 @@ func (h HttpAdminHandler) DeleteDoDomain(c app.GContext) {
 通过id更新数据
 */
 
-func (h HttpAdminHandler) UpdateDomain(c app.GContext) {
+func (h HttpAdminHandler) EditDomain(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id     string `json:"id" binding:"required"`
@@ -67,12 +68,12 @@ func (h HttpAdminHandler) UpdateDomain(c app.GContext) {
 
 	var p P
 	code := e.Success
-	if !utils.CheckError(c.ShouldBindJSON(&p), "updateDomain") {
+	if !utils.CheckError(c.ShouldBindJSON(&p), "editDomain") {
 		code = e.ParamError
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	domain := admin.Domain{Id: p.Id}
+	domain := admin.Domain{}
 	cols := make([]string, 0)
 	if p.Name != "" {
 		domain.Name = p.Name
@@ -83,12 +84,13 @@ func (h HttpAdminHandler) UpdateDomain(c app.GContext) {
 		cols = append(cols, "status")
 	}
 
-	if p.Name == "" && p.Status == 0 {
-		code = e.ParamLose
+	if len(cols) == 0 {
+		code = e.ParamError
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	code = h.logic.Update(domain, cols)
+	queryMap := map[string]interface{}{" id = ": p.Id}
+	code = h.logic.Update(domain, cols, queryMap)
 	g.Json(http.StatusOK, code, "")
 	return
 }
@@ -97,7 +99,7 @@ func (h HttpAdminHandler) UpdateDomain(c app.GContext) {
 不管是通过id还是name查询
 id精确查询 name模糊查询,返回的都是一个数组
 */
-func (h HttpAdminHandler) FindDomainArgs(c app.GContext) {
+func (h HttpAdminHandler) Domains(c app.GContext) {
 	g := app.G{c}
 	type P struct {
 		Id     string `json:"id"`
@@ -114,9 +116,23 @@ func (h HttpAdminHandler) FindDomainArgs(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	domain := admin.Domain{Id: p.Id, Name: p.Name, Status: p.Status}
+	domain := admin.Domain{}
 
-	list, count := h.logic.Find(domain, p.Pn, p.Ps)
+	queryMap := make(map[string]interface{}, 0)
+
+	if p.Id != "" {
+		queryMap["id = "] = p.Id
+	}
+
+	if p.Name != "" {
+		// NAME LIKE '%新%'
+		queryMap[" name like "] = "%" + p.Name + "%"
+	}
+	if p.Status != 0 {
+		queryMap["status = "] = p.Status
+	}
+
+	list, count := h.logic.FindOne(domain, queryMap, p.Pn, p.Ps)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list
