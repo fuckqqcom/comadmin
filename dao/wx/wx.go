@@ -89,7 +89,6 @@ func (d Dao) articles(detail wx.WeiXinParams, ps, pn int) (interface{}, interfac
 	*/
 	//zuiwaiceng  query bool
 	query := elastic.NewBoolQuery()
-
 	boolQuery := elastic.NewBoolQuery()
 	boolQuery.Must(elastic.NewTermQuery("forbid", 1))
 	query.Filter(boolQuery)
@@ -116,6 +115,7 @@ func (d Dao) articles(detail wx.WeiXinParams, ps, pn int) (interface{}, interfac
 	} else if detail.From != "" {
 		query.Filter(elastic.NewRangeQuery("ptime").Gte(utils.Str2Time(t, detail.From)).Lte(time.Now()))
 	}
+
 	query.Filter(queryFilter)
 
 	field := elastic.NewFetchSourceContext(true)

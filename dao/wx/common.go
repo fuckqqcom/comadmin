@@ -88,10 +88,10 @@ func (d Dao) get(bean interface{}, cols []string, m map[string]interface{}) inte
 	return nil
 }
 
-//单表查询
-func (d Dao) find(w interface{}, queryValue map[string]interface{}, ps, pn int) (interface{}, int) {
+//单表查询 暂时没有排序
+func (d Dao) find(w interface{}, queryValue map[string]interface{}, ps, pn int, orderQuery string) (interface{}, int) {
 	query, value := utils.QueryCols(queryValue)
-	count, err := d.engine.Where(query, value...).Limit(ps, (pn-1)*ps).FindAndCount(w)
+	count, err := d.engine.Where(query, value...).OrderBy(orderQuery).Limit(ps, (pn-1)*ps).FindAndCount(w)
 	if utils.CheckError(err, count) {
 		return w, int(count)
 	}

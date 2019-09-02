@@ -12,3 +12,9 @@ type HttpWxHandler struct {
 func NewWxHttpAdminHandler(path string) *HttpWxHandler {
 	return &HttpWxHandler{logic: wx.NewLogic(path)}
 }
+
+const (
+	CtimeDesc = " ctime desc "
+	asc       = "ctime asc"
+	PtimeDesc = " ptime desc "
+)

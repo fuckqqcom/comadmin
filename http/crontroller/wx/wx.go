@@ -116,7 +116,7 @@ func (h HttpWxHandler) GetBiz(c app.GContext) {
 	ps, pn := utils.Pagination(p.Ps, p.Pn, 200)
 	queryMap := make(map[string]interface{})
 	queryMap["mobile_id = "] = p.MobileId
-	biz, count := h.logic.FindOne(p, queryMap, ps, pn)
+	biz, count := h.logic.FindOne(p, queryMap, ps, pn, CtimeDesc)
 	m := make(map[string]interface{})
 	m["list"] = biz
 	m["count"] = count
@@ -130,7 +130,7 @@ func (h HttpWxHandler) GetApi(c app.GContext) {
 
 	api := wx.ApiParams{}
 
-	biz, count := h.logic.FindOne(api, nil, 20, 0)
+	biz, count := h.logic.FindOne(api, nil, 20, 0, CtimeDesc)
 	m := make(map[string]interface{})
 	m["list"] = biz
 	m["count"] = count
@@ -203,7 +203,8 @@ func (h HttpWxHandler) GetDetail(c app.GContext) {
 	}
 	ps, pn := utils.Pagination(p.Ps, p.Pn, 200)
 
-	list, count := h.logic.FindOne(p, nil, ps, pn)
+	//es 倒叙
+	list, count := h.logic.FindOne(p, nil, ps, pn, PtimeDesc)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list
@@ -264,14 +265,14 @@ func (h HttpWxHandler) GetTasks(c app.GContext) {
 
 	var p params
 	code := e.Success
-	if !utils.CheckError(c.ShouldBindJSON(&p), "updateDomain") {
+	if !utils.CheckError(c.ShouldBindJSON(&p), "getTasks") {
 		code = e.ParamError
 		g.Json(http.StatusOK, code, "")
 		return
 	}
 
 	xinList := wx.WeiXinList{}
-	list, count := h.logic.FindOne(xinList, nil, p.Num, 0)
+	list, count := h.logic.FindOne(xinList, nil, p.Num, 0, CtimeDesc)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list
@@ -313,7 +314,7 @@ func (h HttpWxHandler) Nearly7Day(c app.GContext) {
 		queryMap["biz = "] = p.Biz
 	}
 	queryMap["ptime >= "] = utils.Time2Str(time.Now().AddDate(0, 0, -7), "2006-01-02 15:04:05")
-	list, count := h.logic.FindOne(p, queryMap, ps, pn)
+	list, count := h.logic.FindOne(p, queryMap, ps, pn, PtimeDesc)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list

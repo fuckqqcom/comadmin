@@ -17,12 +17,12 @@ type jobHandler interface {
 }
 
 type logicHandler interface {
-	Add(interface{}) int                                                              //添加数据接口
-	Update(interface{}, []string, map[string]interface{}) int                         //更新那些字段
-	FindOne(interface{}, map[string]interface{}, int, int) (interface{}, interface{}) //第一参数是model对象 ，第二个是ps，第三个是pn
-	Exist(interface{}, map[string]interface{}) bool                                   //判断是否存在
-	Delete(interface{}, map[string]interface{}) int                                   //删除  ids可以只一个 可以是多个
-	Get(interface{}, []string, map[string]interface{}) interface{}                    //查询单个对象,返回对象
+	Add(interface{}) int                                                                      //添加数据接口
+	Update(interface{}, []string, map[string]interface{}) int                                 //更新那些字段
+	FindOne(interface{}, map[string]interface{}, int, int, string) (interface{}, interface{}) //第一参数是model对象 ，第二个是ps，第三个是pn
+	Exist(interface{}, map[string]interface{}) bool                                           //判断是否存在
+	Delete(interface{}, map[string]interface{}) int                                           //删除  ids可以只一个 可以是多个
+	Get(interface{}, []string, map[string]interface{}) interface{}                            //查询单个对象,返回对象
 
 	//AddOrDiscard(interface{}, []string, map[string]interface{}) int //创建 如果存在就丢弃
 }
@@ -46,8 +46,8 @@ func (l Logic) Add(bean interface{}) int {
 	return l.Db.Add(bean)
 }
 
-func (l Logic) FindOne(bean interface{}, m map[string]interface{}, pn, ps int) (interface{}, interface{}) {
-	return l.Db.FindOne(bean, m, pn, ps)
+func (l Logic) FindOne(bean interface{}, m map[string]interface{}, pn, ps int, orderQuery string) (interface{}, interface{}) {
+	return l.Db.FindOne(bean, m, pn, ps, orderQuery)
 }
 
 /**
