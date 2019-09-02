@@ -24,3 +24,16 @@ type AddWxParams struct {
 	DelFlag   int       `json:"del_flag"`                   //是否删除
 	Cover     string    `json:"cover"`                      //图链接
 }
+
+type BizParams struct {
+	MobileId string `json:"mobile_id"  binding:"required"` //手机id
+	Ps       int    `json:"ps"`
+	Pn       int    `json:"pn"`
+}
+
+type ApiParams struct {
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	Url      string `json:"url"`
+	Category int    `json:"category"` // 1是阅读点赞接口  2是详情接口 3是其他接口等
+}

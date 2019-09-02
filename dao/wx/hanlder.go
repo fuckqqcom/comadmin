@@ -8,6 +8,7 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/olivere/elastic/v7"
 	"github.com/xormplus/xorm"
+	"log"
 )
 
 type DbHandler interface {
@@ -20,18 +21,17 @@ type wxHandler interface {
 }
 
 type daoHandler interface {
-	Create(interface{}) int                                   //添加数据接口
+	Add(interface{}) int                                      //添加数据接口
 	Update(interface{}, []string, map[string]interface{}) int //修改
-	Delete(interface{}, interface{}) int
+	Delete(interface{}, map[string]interface{}) int
 	Exist(interface{}, map[string]interface{}) bool
-	List(interface{}, int, int) (interface{}, interface{})         //查询,返回列表
-	Get(interface{}, []string, map[string]interface{}) interface{} //查询单个对象,返回对象
-	//CreateOrUpdate(interface{}, []string, map[string]interface{}) int  //创建或者更新 存在就更新,不存在就创建
-	//CreateOrDiscard(interface{}, []string, map[string]interface{}) int //创建 如果存在就丢弃
+	List(interface{}, map[string]interface{}, int, int) (interface{}, interface{}) //查询,返回列表 map装载查询条件  单表查询
+	Get(interface{}, []string, map[string]interface{}) interface{}                 //查询单个对象,返回对象
+	//AddOrUpdate(interface{}, []string, map[string]interface{}) int  //创建或者更新 存在就更新,不存在就创建
+	//AddOrDiscard(interface{}, []string, map[string]interface{}) int //创建 如果存在就丢弃
 }
 
 type jobHandler interface {
-	Register(interface{}) (interface{}, int)
 }
 
 type Dao struct {
@@ -53,109 +53,54 @@ func NewDb(path string) *Dao {
 var _ DbHandler = Dao{}
 
 //后台创建数据
-func (d Dao) Create(i interface{}) int {
+func (d Dao) Add(i interface{}) int {
 	switch t := i.(type) {
-	case wx.WeiXin, wx.WeiXinCount:
-		return d.create(t)
+	case wx.WeiXin, wx.WeiXinCount, wx.Job:
+		//mysql
+		return d.add(t)
 	case wx.WeiXinDetail:
-		return d.insertArticleDetail(t.Id, t)
+		//入库es
+		return d.addArticleDetail(t.Id, t)
 	case wx.WeiXinList:
+		//入库队列
 		return d.addQueue(t)
-
 	default:
-		fmt.Println("create other ...")
+		fmt.Println("add other ...")
 		return e.Errors
 	}
 }
 
-//func (d Dao) CreateOrUpdate(bean interface{}, cols []string, colsValue map[string]interface{}) int {
-//	switch t := bean.(type) {
-//	case wx.WeiXinCount:
-//		//存在就更新
-//		if d.existRecord(t, &wx.WeiXinCount{Biz: t.Biz, ArticleId: t.ArticleId}) {
-//			return d.updateRecord(t, cols, colsValue)
-//		}
-//		return d.create(t)
-//	}
-//	return 0
-//}
-
-func (d Dao) List(i interface{}, ps, pn int) (interface{}, interface{}) {
-
-	switch t := i.(type) {
-	case wx.WeiXinParams:
-		return d.findArticle(t, ps, pn)
-	case wx.WeiXinList:
-		return d.popQueue(t, ps)
-	case wx.WeiXin:
-		return d.findBizList(t.MobileId, ps, pn)
-	case wx.Api:
-		return d.findApi(ps, pn)
-		//查询近7天数据
-	case wx.Nearly7Day:
-		return d.wxNearly7Day(t, ps, pn)
-
+func (d Dao) Delete(bean interface{}, m map[string]interface{}) int {
+	switch t := bean.(type) {
+	case *wx.WeiXinCount, *wx.WeiXinList, *wx.Job:
+		return d.delete(t, m)
 	default:
-		fmt.Println("update other ...")
-		return nil, e.Errors
+		log.Println("delete other error")
+		return e.Errors
 	}
-}
-
-func (d Dao) Delete(interface{}, interface{}) int {
-	return 0
 
 }
 
 func (d Dao) Exist(bean interface{}, m map[string]interface{}) bool {
 	switch t := bean.(type) {
-	case *wx.WeiXinCount, *wx.WeiXinList:
-		return d.existRecord(t)
+	case *wx.WeiXinCount, *wx.WeiXinList, *wx.Job:
+		return d.exist(t)
 	default:
-		return false
+		log.Println("exist other error")
+		return true
 	}
 }
 
 func (d Dao) Update(bean interface{}, cols []string, m map[string]interface{}) int {
 	//todo 怎么优化
 	switch t := bean.(type) {
-	case wx.UserWx:
-		fmt.Println(t)
-		return 0
-	case wx.Job:
-		return d.update(t.Id, t, cols...)
-	case wx.WeiXinCount:
-		return d.updateRecord(bean, cols, m)
+	case wx.Job, wx.WeiXinCount:
+		return d.update(t, cols, m)
 	default:
 		fmt.Println("update other ...")
 		return e.Errors
 	}
 }
-
-//func (d Dao) CreateOrDiscard(bean interface{}, cols []string, colsValue map[string]interface{}) int {
-//	switch t := bean.(type) {
-//	case wx.AddWxParams:
-//		if !d.existRecord(t, &wx.WeiXinList{HashId: t.HashId}) {
-//			w := wx.WeiXinList{
-//				HashId:    t.HashId,
-//				SourceUrl: t.SourceUrl,
-//				Url:       t.Url,
-//				Title:     t.Title,
-//				Ptime:     t.Ptime,
-//				Biz:       t.Biz,
-//				Digest:    t.Digest,
-//				Original:  t.Original,
-//				Type:      t.Type,
-//				DelFlag:   t.DelFlag,
-//				Cover:     t.Cover,
-//			}
-//			return d.create(w)
-//		} else {
-//			return e.ExistError
-//		}
-//	default:
-//		return e.Errors
-//	}
-//}
 
 func (d Dao) Get(bean interface{}, cols []string, colsValue map[string]interface{}) interface{} {
 	switch t := bean.(type) {
@@ -166,11 +111,33 @@ func (d Dao) Get(bean interface{}, cols []string, colsValue map[string]interface
 	}
 }
 
-func (d Dao) Register(bean interface{}) (interface{}, int) {
-	switch t := bean.(type) {
-	case wx.Job:
-		return d.register(t)
+func (d Dao) List(i interface{}, m map[string]interface{}, ps, pn int) (interface{}, interface{}) {
+
+	switch t := i.(type) {
+	case wx.WeiXinParams:
+		return d.articles(t, ps, pn)
+	case wx.WeiXinList:
+		return d.queues(t, ps, pn)
+	case wx.ApiParams:
+		w := make([]wx.Api, 0)
+		return d.find(&w, m, ps, pn)
+	case wx.Nearly7Day:
+		type WeiXinList struct {
+			Biz string
+			Url string
+		}
+		w := make([]WeiXinList, 0)
+		return d.find(&w, m, ps, pn)
+	case wx.BizParams:
+		type WeiXin struct {
+			Id   string `json:"id"`
+			Biz  string `json:"biz"`
+			Name string `json:"name"`
+		}
+		w := make([]WeiXin, 0)
+		return d.find(&w, m, ps, pn)
 	default:
+		fmt.Println("update other ...")
 		return nil, e.Errors
 	}
 }

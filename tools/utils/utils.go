@@ -88,13 +88,14 @@ func FindBizStr(url string) (arr []string) {
 }
 
 func QueryCols(m map[string]interface{}) (query string, value []interface{}) {
+	//待测试 这里是 value是int 和字符串时间等
 	count := 0
 	if m != nil {
 		for k, v := range m {
 			if count == 0 {
-				query += k + " = ? "
+				query += k + "  ? "
 			} else {
-				query += " and " + k + " = ? "
+				query += " and " + k + "  ? "
 			}
 			value = append(value, v)
 			count += 1

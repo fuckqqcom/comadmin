@@ -22,8 +22,8 @@ const (
 	detailKey = "detailKey"
 )
 
-func (d Dao) addQueue(l wx.WeiXinList) int {
-	code := d.create(l)
+func (d Dao) addQueue(w wx.WeiXinList) int {
+	code := d.add(w)
 	//先判断是否创建成功
 	if code != e.Success {
 		return code
@@ -38,12 +38,12 @@ func (d Dao) addQueue(l wx.WeiXinList) int {
 	}
 
 	p := Params{
-		Id:       l.Id,
-		Title:    l.Title,
-		Url:      l.Url,
-		Original: l.Original,
-		Biz:      l.Biz,
-		Ptime:    l.Ptime,
+		Id:       w.Id,
+		Title:    w.Title,
+		Url:      w.Url,
+		Original: w.Original,
+		Biz:      w.Biz,
+		Ptime:    w.Ptime,
 	}
 	bytes, err := json.Marshal(p)
 	if utils.CheckError(err, string(bytes)) {
@@ -60,7 +60,7 @@ func (d Dao) addQueue(l wx.WeiXinList) int {
 /**
 从队列中取数据
 */
-func (d Dao) popQueue(l wx.WeiXinList, num int) (interface{}, int) {
+func (d Dao) queues(l wx.WeiXinList, num, pn int) (interface{}, int) {
 	if num <= 0 || num >= 10 {
 		num = 5
 	}

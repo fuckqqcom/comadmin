@@ -6,13 +6,12 @@ import (
 	"comadmin/tools/utils"
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/olivere/elastic/v7"
 	"strings"
 	"time"
 )
 
-func (d Dao) findBizList(mobileId string, ps, pn int) (interface{}, int) {
+func (d Dao) bizs(m map[string]interface{}, ps, pn int) (interface{}, int) {
 	type WeiXin struct {
 		Id   string `json:"id"`
 		Biz  string `json:"biz"`
@@ -20,18 +19,15 @@ func (d Dao) findBizList(mobileId string, ps, pn int) (interface{}, int) {
 	}
 
 	w := make([]WeiXin, 0)
-	sql := "select * from wei_xin where 1 = 1 "
-	if mobileId != "" {
-		sql += fmt.Sprintf(" and mobile_id = '%s'", mobileId)
-	}
-	count, err := d.engine.SQL(sql).Limit(ps, (pn-1)*ps).OrderBy("mtime desc ").FindAndCount(&w)
+	query, value := utils.QueryCols(m)
+	count, err := d.engine.Where(query, value...).Limit(ps, (pn-1)*ps).OrderBy("mtime desc ").FindAndCount(&w)
 	if utils.CheckError(err, count) {
 		return w, int(count)
 	}
 	return nil, 0
 }
 
-func (d Dao) findApi(ps, pn int) (interface{}, int) {
+func (d Dao) apis(m map[string]interface{}, ps, pn int) (interface{}, int) {
 
 	type Api struct {
 		Id       string `json:"id"`
@@ -41,8 +37,8 @@ func (d Dao) findApi(ps, pn int) (interface{}, int) {
 	}
 
 	w := make([]Api, 0)
-
-	count, err := d.engine.Limit(ps, (pn-1)*ps).FindAndCount(&w)
+	query, value := utils.QueryCols(m)
+	count, err := d.engine.Where(query, value).Limit(ps, (pn-1)*ps).FindAndCount(&w)
 	if utils.CheckError(err, count) {
 		return w, int(count)
 	}
@@ -50,7 +46,7 @@ func (d Dao) findApi(ps, pn int) (interface{}, int) {
 }
 
 //插入es数据
-func (d Dao) insertArticleDetail(id string, bean interface{}) int {
+func (d Dao) addArticleDetail(id string, bean interface{}) int {
 	data := ""
 	marshal, err := json.Marshal(bean)
 	if err == nil {
@@ -66,27 +62,15 @@ func (d Dao) insertArticleDetail(id string, bean interface{}) int {
 	return e.Errors
 }
 
-//插入列表数据
-func (d Dao) insertArticleList(bean interface{}) int {
-	affect, err := d.engine.Insert(bean)
-	if utils.CheckError(err, affect) {
-		return e.Success
-	}
-	return e.Errors
-}
+func (d Dao) wxNearly7Days(m map[string]interface{}, ps, pn int) (interface{}, int) {
 
-func (d Dao) wxNearly7Day(list wx.Nearly7Day, ps, pn int) (interface{}, int) {
-	sql := "select biz , url from wei_xin_list where 1=1  "
-	if list.Biz != "" {
-		sql += fmt.Sprintf(" and biz = '%s'", list.Biz)
-	}
-	sql += fmt.Sprintf(" and ptime >= '%s' ", utils.Time2Str(time.Now().AddDate(0, 0, -7), "2006-01-02 15:04:05"))
-	type ret struct {
+	type WeiXinList struct {
 		Biz string
 		Url string
 	}
-	w := make([]ret, 0)
-	count, err := d.engine.SQL(sql).Limit(ps, (pn-1)*ps).FindAndCount(&w)
+	w := make([]WeiXinList, 0)
+	query, value := utils.QueryCols(m)
+	count, err := d.engine.Where(query, value...).Limit(ps, (pn-1)*ps).FindAndCount(&w)
 	if utils.CheckError(err, count) {
 		return w, int(count)
 	}
@@ -94,7 +78,7 @@ func (d Dao) wxNearly7Day(list wx.Nearly7Day, ps, pn int) (interface{}, int) {
 }
 
 //查询数据
-func (d Dao) findArticle(detail wx.WeiXinParams, ps, pn int) (interface{}, interface{}) {
+func (d Dao) articles(detail wx.WeiXinParams, ps, pn int) (interface{}, interface{}) {
 	/**
 	这里拼接es sql
 
@@ -149,65 +133,4 @@ func (d Dao) findArticle(detail wx.WeiXinParams, ps, pn int) (interface{}, inter
 		return array, result.Hits.TotalHits.Value
 	}
 	return nil, 0
-}
-
-/**
-查询公号是否存在
-*/
-
-func (d Dao) existWx(u wx.UserWx) int {
-	w := &wx.WeiXin{Name: u.Name}
-	affect, err := d.engine.Exist(w)
-	//存在就返回，不存在就创建
-	if utils.CheckError(err, affect) && affect {
-		return e.ExistError
-	} else {
-		//
-		return d.create(u)
-	}
-}
-
-/**
-审核数据接口(讲用户提交的数据同步到抓取数据) 审核通过的时候手动把biz补到页面中
-*/
-
-func (d Dao) verify(u wx.UserWx, id interface{}, cols ...string) int {
-	//在http层就限制死  status == 1
-	w := wx.WeiXin{Biz: u.Biz, Name: u.Name, Forbid: 1}
-	if d.create(w) == e.Success && d.update(id, u, cols...) == e.Success {
-		return e.Success
-	} else {
-		return e.Errors
-	}
-
-}
-
-//更新
-
-func (d Dao) updateWx(id interface{}, bean interface{}, cols ...string) int {
-
-	affect, err := d.engine.Where(" id = ? ", id).Cols(cols...).Update(bean)
-	if utils.CheckError(err, affect) {
-		return e.Success
-	}
-	return e.Errors
-}
-
-//更新阅读点赞
-func (d Dao) updateCount(w wx.WeiXinCount) int {
-	affect, err := d.engine.Where(" biz = ?  and article_id = ? ", w.Biz, w.ArticleId).Cols("read_count", "thumb_count").Update(w)
-	if utils.CheckError(err, affect) {
-		return e.Success
-	}
-	return e.Errors
-}
-
-//查询 biz是否存在
-
-func (d Dao) existBiz(bean interface{}, id, articleId string) int {
-	affect, err := d.engine.Where("biz = ? and article_id = ?", id, articleId).Exist(bean)
-	if utils.CheckError(err, affect) && affect {
-		return e.Success
-	}
-	return e.ExistError
 }
