@@ -23,8 +23,17 @@ func (h HttpAdminHandler) AddDomain(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	domain := admin.Domain{Name: p.Name, Id: utils.EncodeMd5(p.Name), Status: 1}
-	code = h.logic.Add(domain)
+	//先检查是否存在
+	domain := admin.Domain{Id: utils.EncodeMd5(p.Name)}
+
+	if !h.logic.Exist(&domain, nil) {
+		domain.Name = p.Name
+		domain.Status = 1
+		code = h.logic.Add(domain)
+
+	} else {
+		code = e.ExistError
+	}
 	g.Json(http.StatusOK, code, "")
 	return
 }

@@ -218,7 +218,7 @@ func (h HttpWxHandler) GetDetail(c app.GContext) {
 func (h HttpWxHandler) AddWxList(c app.GContext) {
 	g := app.G{c}
 
-	var p wx.WeiXinList
+	var p wx.AddWxParams
 	code := e.Success
 	if !utils.CheckError(c.ShouldBindJSON(&p), "AddWxList") {
 		code = e.ParamError
@@ -228,21 +228,25 @@ func (h HttpWxHandler) AddWxList(c app.GContext) {
 	//http://mp.weixin.qq.com/s?__biz=MzU3ODE2NTMxNQ==&mid=2247485961&idx=1
 	//biz=(\w*).*?mid=(\w*)\w+&idx=(\d+)
 	ids := utils.FindBizStr(p.Url)
+	biz := ""
+	var w wx.WeiXinList
 	if ids != nil {
-		p.HashId = utils.EncodeMd5(strings.Join(ids, "_"))
+		biz = ids[0]
+		w.Biz = biz
+		w.HashId = utils.EncodeMd5(strings.Join(ids, "_"))
 	} else {
 		//log  url 提取idx等参数异常
 		code = e.ParamError
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-
 	m := make(map[string]interface{})
-	m["hash_id"] = p.HashId
+	m["hash_id"] = w.HashId
 	//todo 先查询hashId是否存在，存在就不入库，不存在就存在入库
-	query := wx.WeiXinList{HashId: p.HashId}
-	if !h.logic.Exist(&query, m) {
-		code = h.logic.Add(p)
+	//query := wx.WeiXinList{HashId: w.HashId}
+	if !h.logic.Exist(&w, m) {
+		w.Ptime = time.Unix(int64(p.Ptime), 0)
+		code = h.logic.Add(w)
 	} else {
 		code = e.ExistError
 	}
