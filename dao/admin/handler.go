@@ -6,13 +6,16 @@ import (
 	"comadmin/pkg/e"
 	"fmt"
 	"github.com/xormplus/xorm"
+	"log"
 )
 
 type DbHandler interface {
 	Login(interface{}) int
 	Add(interface{}) int //创建
 	Delete(interface{}, map[string]interface{}) int
-	Update(interface{}, []string, map[string]interface{}) int                 //修改
+	Update(interface{}, []string, map[string]interface{}) int
+	Exist(interface{}, map[string]interface{}) bool
+	//修改
 	FindOne(interface{}, map[string]interface{}, int, int) (interface{}, int) //查询,返回列表 map装载查询条件  单表查询
 	FindById(id interface{}) int
 } //查询
@@ -116,6 +119,16 @@ func (d Dao) FindOne(bean interface{}, m map[string]interface{}, ps, pn int) (in
 	default:
 		fmt.Println("update other ...")
 		return nil, e.Errors
+	}
+}
+
+func (d Dao) Exist(bean interface{}, m map[string]interface{}) bool {
+	switch t := bean.(type) {
+	case *admin.DomainApp, *admin.Domain:
+		return d.exist(t)
+	default:
+		log.Println("exist other error")
+		return false
 	}
 }
 

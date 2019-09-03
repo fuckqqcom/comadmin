@@ -60,6 +60,6 @@ func (l Logic) FindById(id interface{}) int {
 	return l.Db.FindById(id)
 }
 
-func (l Logic) Exist(interface{}, map[string]interface{}) bool {
-	panic("implement me")
+func (l Logic) Exist(bean interface{}, m map[string]interface{}) bool {
+	return l.Db.Exist(bean, m)
 }

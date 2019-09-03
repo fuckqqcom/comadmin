@@ -76,3 +76,11 @@ func (d Dao) findOneTable(w interface{}, queryValue map[string]interface{}, ps, 
 	}
 	return nil, 0
 }
+
+func (d Dao) exist(bean interface{}) bool {
+	affect, err := d.engine.Exist(bean)
+	if utils.CheckError(err, affect) {
+		return affect
+	}
+	return false
+}

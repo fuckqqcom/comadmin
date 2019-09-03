@@ -24,7 +24,7 @@ func NewRouter(path string) *gin.Engine {
 		////app
 		domain.POST("/createApp", r.AddDomainApp)
 		domain.POST("/updateApp", r.UpdateDomainApp)
-		//domain.POST("/findApp", r.FindDomainApp)
+		domain.POST("/findApp", r.FindDomainApp)
 		//domain.POST("/deleteApp", r.DeleteDomainApp)
 	}
 

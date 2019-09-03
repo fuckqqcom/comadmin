@@ -65,7 +65,7 @@ type WeiXinList struct {
 	Url       string    `json:"url"  binding:"required" `    //文章url
 	Title     string    `json:"title" binding:"required"   ` //文章标题
 	Ptime     time.Time `json:"ptime"`                       //发布时间
-	Biz       string    `json:"biz" binding:"required" `     //biz信息
+	Biz       string    `json:"biz"`                         //biz信息
 	Digest    string    `json:"digest"`                      //摘要
 	Original  int       `json:"original"`                    //原型信息
 	Type      int       `json:"type"`                        //api接口中的字段
