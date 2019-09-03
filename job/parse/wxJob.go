@@ -1,13 +1,13 @@
 package parse
 
 import (
-	"comadmin/tools/utils"
 	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"io"
 	"log"
 	"strings"
+	"time"
 )
 
 /**
@@ -16,7 +16,11 @@ import (
 
 //http请求
 
-func ParseDetail(i Info) {
+const (
+	detail = "http://api.pipenv.com/v1/wx/addDetail"
+)
+
+func Detail(i Info) {
 	if i.Url == "" {
 		return
 	}
@@ -51,13 +55,16 @@ func ParseDetail(i Info) {
 
 	params := Params{
 		Id:        i.Id,
-		Title:     i.Url,
+		Url:       i.Url,
+		Title:     i.Title,
 		Text:      content,
 		TextStyle: contentStyle,
 		Biz:       i.Biz,
-		Ptime:     utils.Time2Str(i.Ptime, "2006-01-02 15:04:05"),
+		Ptime:     i.Ptime,
 		Author:    nickName,
 		From:      "wx",
+		Ctime:     time.Now(),
+		Mtime:     time.Now(),
 	}
 	uploadData(params)
 
@@ -74,8 +81,7 @@ func uploadData(params Params) {
 	payload := strings.NewReader(string(bytes))
 	header := map[string]string{"Content-Type": "application/json"}
 	r := Request{
-		Id:          "",
-		Url:         "",
+		Url:         detail,
 		Body:        payload,
 		Retry:       3,
 		Timeout:     10,
@@ -85,5 +91,6 @@ func uploadData(params Params) {
 		VerifyProxy: false,
 		VerifyTLS:   false,
 	}
-	r.Fetch()
+	fetch, err := r.Fetch()
+	log.Printf("upload data is %v %s", fetch, err)
 }

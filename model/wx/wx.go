@@ -45,6 +45,7 @@ type WeiXinDetail struct {
 	Text      string    `json:"text"`       //正文
 	TextStyle string    `json:"text_style"` //带样式的正文
 	Biz       string    `json:"biz"`        //biz
+	Url       string    `json:"url"`        //url
 	Ctime     time.Time `json:"ctime"`      //入库时间
 	Mtime     time.Time `json:"mtime"`      //修改时间
 	Ptime     time.Time `json:"ptime"`      //发布时间

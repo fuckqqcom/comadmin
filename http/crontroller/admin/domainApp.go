@@ -26,9 +26,12 @@ func (h HttpAdminHandler) AddDomainApp(c app.GContext) {
 		return
 	}
 
-	domain := &admin.Domain{Id: p.Did}
-	code = h.logic.FindById(domain)
-	if code != e.Success {
+	domain := &admin.Domain{}
+	queryMap := map[string]interface{}{"id = ": p.Did}
+	//先查domain是否存在
+	exist := h.logic.Exist(domain, queryMap)
+	if !exist {
+		code = e.ParamError
 		g.Json(http.StatusOK, code, "")
 		return
 	}

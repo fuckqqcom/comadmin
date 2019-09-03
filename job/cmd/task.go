@@ -17,9 +17,10 @@ func main() {
 }
 
 const (
-	url = "http://127.0.0.1:1234/v1/wx/pop"
+	//queue
+	url = "http://api.pipenv.com/v1/wx/getTasks"
 	//detail
-	detail = "http://127.0.0.1:1234/v1/wx/detail"
+
 )
 
 func loadDetailJob() {
@@ -51,7 +52,7 @@ func loadDetailJob() {
 		}
 		for _, v := range ret.Data.List {
 
-			parse.ParseDetail(v)
+			parse.Detail(v)
 		}
 	}
 
