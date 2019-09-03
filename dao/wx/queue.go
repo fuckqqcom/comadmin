@@ -29,7 +29,7 @@ func (d Dao) addQueue(w wx.WeiXinList) int {
 		return code
 	}
 	type Params struct {
-		Id       int64     `json:"id"`
+		Id       string    `json:"id"`
 		Title    string    `json:"title"`
 		Url      string    `json:"url"`
 		Original int       `json:"origin"`
@@ -38,7 +38,7 @@ func (d Dao) addQueue(w wx.WeiXinList) int {
 	}
 
 	p := Params{
-		Id:       w.Id,
+		Id:       w.HashId,
 		Title:    w.Title,
 		Url:      w.Url,
 		Original: w.Original,
