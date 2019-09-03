@@ -123,8 +123,9 @@ func (d Dao) FindOne(i interface{}, m map[string]interface{}, ps, pn int, orderQ
 		return d.find(&w, m, ps, pn, orderQuery)
 	case wx.Nearly7Day:
 		type WeiXinList struct {
-			Biz string
-			Url string
+			Biz    string `json:"biz"`
+			Url    string `json:"url"`
+			HashId string `json:"hash_id"`
 		}
 		w := make([]WeiXinList, 0)
 		return d.find(&w, m, ps, pn, orderQuery)
