@@ -62,7 +62,7 @@ func (d Dao) addQueue(w wx.WeiXinList) int {
 */
 func (d Dao) queues(l wx.WeiXinList, num, pn int) (interface{}, int) {
 	if num <= 0 || num >= 10 {
-		num = 5
+		num = 2
 	}
 	s := make([]interface{}, 0)
 	/**
@@ -84,7 +84,8 @@ func (d Dao) queues(l wx.WeiXinList, num, pn int) (interface{}, int) {
 			break
 		}
 		if utils.CheckError(err, pop) {
-			s[i] = json.Unmarshal([]byte(pop), &p)
+			json.Unmarshal([]byte(pop), &p)
+			s = append(s, p)
 		}
 	}
 	return s, len(s)
