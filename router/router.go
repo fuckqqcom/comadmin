@@ -80,6 +80,9 @@ func NewRouter(path string) *gin.Engine {
 
 		//更新微信key
 		weiXin.POST("/updateKey", r.UpdateKey)
+
+		weiXin.POST("/download", r.DownLoad)
+
 	}
 	ginpprof.Wrapper(r.Engine)
 	return r.Engine

@@ -31,3 +31,9 @@ type UpdateKeyParams struct {
 	Url string `json:"url" binding:"required"`
 	Key string `json:"key" binding:"required"`
 }
+
+//到处biz的pdf
+type BizPdf struct {
+	Biz string `json:"biz"`
+	Ids string `json:"ids"`
+}

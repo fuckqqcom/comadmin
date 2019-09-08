@@ -16,6 +16,7 @@ var msgDict = map[int]string{
 	NotExistError:    "不存在",
 	ParamError:       "参数错误",
 	ParamLose:        "缺少必要的参数",
+	NoLogin:          "请登录后查看更多页",
 }
 
 func GetMsg(code int) string {

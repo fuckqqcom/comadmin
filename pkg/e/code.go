@@ -9,6 +9,8 @@ const (
 	TokenCreateError = 2000
 	JobError         = 3000
 
+	NoLogin = 0001
+
 	//业务编码
 	AddError      = 1000 //添加失败
 	UpdateError   = 1001 //更新失败
