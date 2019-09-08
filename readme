@@ -93,7 +93,7 @@ TODO
 
 五:获取抓取列表新信息(近七天的):
     url:wx/nearly7Day
-    paramm:{"biz":"",pn:1,ps:1}
+    params:{"biz":"",pn:1,ps:1}
     biz不传递，就是获取所有公号的数据(每页200条),如果传递就是获取某一个公号的数据(200条每页)
     //pn页码 ps每页多少条
     method:post
@@ -110,6 +110,16 @@ TODO
                   "msg": "成功"
                 }
 
+六:更新key接口
+    url:/v1/wx/updateKey
+    params:{"url":"","key":""}
+    method:post
+     返回值:
+        {
+            "code":"",
+            "msg":"",
+            "data":""
+        }
 
 nginx异常配置总结:
 mysql视图
