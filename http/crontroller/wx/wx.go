@@ -107,7 +107,7 @@ func (h HttpWxHandler) GetBiz(c app.GContext) {
 
 	var p wx.BizParams
 	code := e.Success
-	if !utils.CheckError(c.ShouldBindJSON(&p), "userAddWx") {
+	if !utils.CheckError(c.ShouldBindJSON(&p), "GetBiz") {
 		code = e.ParamError
 		g.Json(http.StatusOK, code, "")
 		return
