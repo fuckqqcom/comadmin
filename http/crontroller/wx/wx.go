@@ -325,3 +325,26 @@ func (h HttpWxHandler) Nearly7Day(c app.GContext) {
 	g.Json(http.StatusOK, code, m)
 	return
 }
+
+//UpdateKey
+func (h HttpWxHandler) UpdateKey(c app.GContext) {
+	g := app.G{c}
+
+	var p wx.UpdateKeyParams
+	code := e.Success
+	if !utils.CheckError(c.ShouldBindJSON(&p), "UpdateKey") {
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "")
+		return
+	}
+	ids := utils.FindBizStr(p.Url)
+	if ids == nil {
+		code = e.ParamError
+		g.Json(http.StatusOK, code, "截取biz异常")
+		return
+	}
+	xin := wx.WeiXin{Key: p.Key}
+
+	code = h.logic.Update(xin, []string{"key"}, map[string]interface{}{"biz = ": ids[0]})
+	g.Json(http.StatusOK, code, "")
+}

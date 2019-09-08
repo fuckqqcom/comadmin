@@ -26,3 +26,8 @@ type ApiParams struct {
 	Url      string `json:"url"`
 	Category int    `json:"category"` // 1是阅读点赞接口  2是详情接口 3是其他接口等
 }
+
+type UpdateKeyParams struct {
+	Url string `json:"url" binding:"required"`
+	Key string `json:"key" binding:"required"`
+}
