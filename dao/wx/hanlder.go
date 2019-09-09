@@ -94,7 +94,7 @@ func (d Dao) Exist(bean interface{}, m map[string]interface{}) bool {
 func (d Dao) Update(bean interface{}, cols []string, m map[string]interface{}) int {
 	//todo 怎么优化
 	switch t := bean.(type) {
-	case wx.Job, wx.WeiXinCount:
+	case wx.Job, wx.WeiXinCount, wx.WeiXin:
 		return d.update(t, cols, m)
 	default:
 		fmt.Println("update other ...")

@@ -19,6 +19,7 @@ func main() {
 const (
 	//queue
 	url = "http://api.pipenv.com/v1/wx/getTasks"
+
 	//detail
 
 )
@@ -36,13 +37,14 @@ func loadDetailJob() {
 
 	var ret RetData
 
-	payload := strings.NewReader("{\"num\":10}")
+	payload := strings.NewReader("{\"num\":15}")
 	header := map[string]string{"Content-Type": "application/json"}
 	r := parse.Request{Url: url, Interval: 10, Timeout: 10, Body: payload, Header: header}
 	bytes, err := r.Fetch()
 	fmt.Println(string(bytes))
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 	err = json.Unmarshal(bytes, &ret)
 

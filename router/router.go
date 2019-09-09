@@ -78,29 +78,11 @@ func NewRouter(path string) *gin.Engine {
 		//查询数据接口
 		weiXin.POST("/getDetail", r.GetDetail)
 
-		////获取所有biz和name信息
-		//weiXin.GET("/biz", r.FindBiz)
-		//获取点赞等接口
-		//weiXin.GET("/api", r.FindApi)
-		//提交点赞和阅读量数据接口  readAndThumbCount
-		//weiXin.POST("/post", r.ReadAndThumbCount)
-		//详情页入库接口
-		//weiXin.POST("/detail", r.AddDetail)
+		//更新微信key
+		weiXin.POST("/updateKey", r.UpdateKey)
 
-		//获取队列任务(默认是5个job)
-		//weiXin.GET("/pop", r.PopQueue)
-		//用户添加wx号
-		//weiXin.POST("/addWx", r.UserAddWx)
-		//后台添加公号
-		//weiXin.POST("/wx", r.AddWx)
-		//查询数据接口
-		//weiXin.POST("/find", r.FindDetail)
-		//job注册
-		//weiXin.POST("/registerJob", r.RegisterJob)
-		//更新job
-		//weiXin.POST("/updateJob", r.UpdateJob)
-		//获取近七天的文章列表
-		//weiXin.GET("/nearly7Day", r.Nearly7Day)
+		weiXin.POST("/download", r.DownLoad)
+
 	}
 	ginpprof.Wrapper(r.Engine)
 	return r.Engine

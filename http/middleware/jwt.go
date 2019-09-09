@@ -12,10 +12,20 @@ import (
 func JWT() gin.HandlerFunc {
 	return func(c app.GContext) {
 		var code int
-		var data interface{}
-
+		g := app.G{c}
 		code = e.Success
+		/**
+		header中带用户id
+		*/
 		token := c.Request.Header.Get("token")
+		//先查询redis存在不  key是用户id
+		/**
+		if userKey {
+
+		}else{
+
+		}
+		*/
 		if token == "" {
 			code = e.Unauthorized
 		} else {
@@ -28,14 +38,10 @@ func JWT() gin.HandlerFunc {
 			}
 		}
 		if code != e.Success {
-			c.JSON(http.StatusOK, gin.H{
-				"code": code,
-				"msg":  e.GetMsg(code),
-				"data": data,
-			})
-			c.Abort()
+			g.Json(http.StatusOK, code, "")
+			g.Abort()
 			return
 		}
-		c.Next()
+		g.Next()
 	}
 }
