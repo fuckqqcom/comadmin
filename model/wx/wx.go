@@ -99,4 +99,5 @@ type WeiXinParams struct {
 	Title    string `json:"title"`    //标题模糊查询
 	Pn       int    `json:"pn"`
 	Ps       int    `json:"ps"`
+	Type     int    `json:"type"` //导出当前页还是导出全部数据  1是导出全部  -1导出当前页
 }

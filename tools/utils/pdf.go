@@ -3,7 +3,7 @@ package utils
 import (
 	"archive/zip"
 	"fmt"
-	"github.com/adrg/go-wkhtmltopdf"
+	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	"io"
 	"log"
 	"os"
@@ -50,7 +50,7 @@ func (p Pdf) isExist() bool {
 
 func (p Pdf) HtmlToPdf() {
 	if runtime.GOOS == "windows" {
-		wkhtmltopdf.SetPath(".pdf.exe")
+		wkhtmltopdf.SetPath("tools/utils/pdf.exe")
 	}
 	pdf, err := wkhtmltopdf.NewPDFGenerator()
 

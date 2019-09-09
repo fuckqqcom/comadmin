@@ -191,7 +191,7 @@ func (h HttpWxHandler) ReadAndThumbCount(c app.GContext) {
 }
 
 //前端查询接口
-func (h HttpWxHandler) GetDetail(c app.GContext) {
+func (h HttpWxHandler) GetArticleList(c app.GContext) {
 	g := app.G{c}
 
 	var p wx.WeiXinParams

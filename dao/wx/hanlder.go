@@ -137,6 +137,9 @@ func (d Dao) FindOne(i interface{}, m map[string]interface{}, ps, pn int, orderQ
 		}
 		w := make([]WeiXin, 0)
 		return d.find(&w, m, ps, pn, orderQuery)
+	case wx.DownPdf:
+		fmt.Println("download pdf")
+		return nil, nil
 	default:
 		fmt.Println("update other ...")
 		return nil, e.Errors

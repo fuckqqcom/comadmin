@@ -9,9 +9,15 @@ import (
 )
 
 func main() {
-	src := "tools/utils"
-	dest := "sync.zip"
-	Zip(src, dest)
+	a := 10
+	for i := 0; i <= a; {
+		fmt.Println(i)
+		i += 2
+
+	}
+	//src := "tools/utils"
+	//dest := "sync.zip"
+	//Zip(src, dest)
 }
 
 func read(c chan bool, i int) {
