@@ -246,6 +246,8 @@ func (h HttpWxHandler) AddWxList(c app.GContext) {
 	//query := wx.WeiXinList{HashId: w.HashId}
 	if !h.logic.Exist(&w, m) {
 		w.Ptime = time.Unix(int64(p.Ptime), 0)
+		w.Url = p.Url
+		w.Title = p.Title
 		code = h.logic.Add(w)
 	} else {
 		code = e.ExistError
