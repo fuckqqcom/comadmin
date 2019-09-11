@@ -12,6 +12,7 @@ type Job struct {
 	Ctime    time.Time `json:"ctime"  xorm:"created"` //注册时间
 	Count    int       `json:"count"`                 //运行次数
 	JobCount int       `json:"job_count"`             //任务数量
+	Interval int       `json:"interval"`              //时间间隔 ，默认值是 1分钟 配置的
 	Status   int       `json:"status"`                //是否在线运行
 	Etime    time.Time `json:"etime" xorm:"updated"`  //运行结束时间
 }
