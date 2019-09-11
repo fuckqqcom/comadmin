@@ -6,7 +6,6 @@ import (
 	"comadmin/tools/utils"
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/olivere/elastic/v7"
 	"strings"
 	"time"
@@ -53,7 +52,6 @@ func (d Dao) addArticleDetail(id string, bean interface{}) int {
 	if err == nil {
 		data = string(marshal)
 	}
-	fmt.Println("data--->", data)
 	type A struct {
 		Name string `json:"name"`
 	}
