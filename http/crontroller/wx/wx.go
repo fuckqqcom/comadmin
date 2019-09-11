@@ -347,6 +347,6 @@ func (h HttpWxHandler) UpdateKey(c app.GContext) {
 	}
 	xin := wx.WeiXin{Key: p.Key}
 
-	code = h.logic.Update(xin, []string{"key"}, map[string]interface{}{"biz = ": ids[0]})
+	code = h.logic.Update(xin, []string{"key", "uin"}, map[string]interface{}{"biz = ": ids[0]})
 	g.Json(http.StatusOK, code, "")
 }

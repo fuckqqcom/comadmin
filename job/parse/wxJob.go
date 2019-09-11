@@ -61,7 +61,7 @@ func Detail(i Info) {
 		TextStyle: contentStyle,
 		Biz:       i.Biz,
 		Ptime:     i.Ptime,
-		Author:    nickName,
+		Author:    strings.ReplaceAll(nickName, " ", ""),
 		From:      "wx",
 		Ctime:     time.Now(),
 		Mtime:     time.Now(),
@@ -92,5 +92,5 @@ func uploadData(params Params) {
 		VerifyTLS:   false,
 	}
 	fetch, err := r.Fetch()
-	log.Printf("upload data is %v %s", fetch, err)
+	log.Printf("upload data is %v %s", string(fetch), err)
 }

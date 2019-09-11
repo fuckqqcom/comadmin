@@ -12,6 +12,7 @@ type WeiXin struct {
 	Url      string    `json:"url"`                   //img url
 	Desc     string    `json:"detail"`                //公号描述
 	Count    int       `json:"count"`                 //公号文章数
+	Uin      string    `json:"uin"`                   //uin
 	Ctime    time.Time `json:"ctime" xorm:"created" ` //创建时间
 	Mtime    time.Time `json:"mtime" xorm:"updated" ` //最后一次更新时间
 	Forbid   int       `json:"forbid"`                //公号是否被微信官方搞事了

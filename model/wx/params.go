@@ -30,6 +30,7 @@ type ApiParams struct {
 type UpdateKeyParams struct {
 	Url string `json:"url" binding:"required"`
 	Key string `json:"key" binding:"required"`
+	Uin string `json:"uin"  binding:"required"`
 }
 
 //到处biz的pdf
