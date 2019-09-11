@@ -119,7 +119,7 @@ func loadDetailJob() {
 
 	payload := strings.NewReader("{\"num\": " + strconv.Itoa(JobCount) + " }")
 	header := map[string]string{"Content-Type": "application/json"}
-	r := parse.Request{Url: url, Interval: Interval, Timeout: 10, Body: payload, Header: header}
+	r := parse.Request{Url: url, Interval: Interval, Timeout: 100, Body: payload, Header: header}
 	bytes, err := r.Fetch()
 	if err != nil {
 		fmt.Println(err)
@@ -133,7 +133,7 @@ func loadDetailJob() {
 		}
 		for _, v := range ret.Data.List {
 
-			parse.Detail(v)
+			parse.Detail(v, Interval)
 		}
 	}
 
