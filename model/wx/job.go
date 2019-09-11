@@ -5,7 +5,6 @@ import "time"
 /**
 第一次运行的时候注册，客户端分配Id
 */
-
 type Job struct {
 	Id       string    `json:"id"`                    //客户端id
 	Ip       string    `json:"ip"`                    //客户端ip
