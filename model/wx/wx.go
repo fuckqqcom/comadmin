@@ -99,7 +99,7 @@ type UserWx struct {
 
 //查询参数
 type WeiXinParams struct {
-	Biz      string `json:"biz"`      //查询biz
+	Id       int    `json:"id"`       //查询biz
 	Keywords string `json:"keywords"` //关键字
 	From     string `json:"from"`     //发布时间起始
 	To       string `json:"to"`       // 发布时间截止

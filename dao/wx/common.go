@@ -1,6 +1,7 @@
 package wxd
 
 import (
+	"comadmin/model/wx"
 	"comadmin/pkg/e"
 	"comadmin/tools/utils"
 	"strings"
@@ -96,4 +97,13 @@ func (d Dao) find(w interface{}, queryValue map[string]interface{}, ps, pn int, 
 		return w, int(count)
 	}
 	return nil, 0
+}
+
+func (d Dao) findBizById(id int) string {
+	w := new(wx.WeiXin)
+	affect, err := d.engine.Where("id = ? ", id).Get(w)
+	if utils.CheckError(err, affect) {
+		return w.Biz
+	}
+	return ""
 }

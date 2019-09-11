@@ -106,8 +106,11 @@ func (d Dao) articles(detail wx.WeiXinParams, ps, pn int) (interface{}, interfac
 			newBoolQuery.Should(elastic.NewWildcardQuery("text", v))
 		}
 	}
-	if detail.Biz != "" {
-		query.Must(elastic.NewMatchQuery("biz", detail.Biz))
+	if detail.Id != 0 {
+		biz := d.findBizById(detail.Id)
+		if biz != "" {
+			query.Must(elastic.NewMatchQuery("biz", biz))
+		}
 	}
 	const t = "2006-01-02 15:04:05"
 	if detail.From != "" && detail.To != "" {
