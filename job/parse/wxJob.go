@@ -2,7 +2,6 @@ package parse
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"io"
 	"log"
@@ -52,7 +51,6 @@ func Detail(i Info) {
 	nickName := doc.Find("#js_name").Text()
 	contentStyle, _ := doc.Find("#js_content").Html()
 	content := doc.Find("#js_content").Text()
-	fmt.Println(nickName, contentStyle, content)
 
 	params := Params{
 		Id:        i.Id,

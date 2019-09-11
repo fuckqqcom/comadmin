@@ -13,7 +13,7 @@ func main() {
 	//config.EngDb.Sync2(new(admin.User))
 	//config.EngDb.Sync2(new(admin.DomainAppUser))
 	//
-	config.EngDb.Sync2(new(wx.WeiXin))
+	config.EngDb.Sync2(new(wx.Job))
 	//config.EngDb.Sync2(new(wx.Api))
 	//config.EngDb.Sync2(new(wx.WeiXinCount))
 	//config.EngDb.Sync2(new(wx.WeiXinList))

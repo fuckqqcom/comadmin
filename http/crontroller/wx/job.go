@@ -69,11 +69,15 @@ func (h HttpWxHandler) OnlineJob(c app.GContext) {
 	先查询是否存在,不存在就创建
 	存在就更新字段
 	*/
-	inter := h.logic.Get(&job, []string{"count"}, nil)
+	m := make(map[string]interface{})
+
+	inter := h.logic.Get(&job, []string{" `count` ", "job_count", " `interval` "}, nil)
 	if inter == nil {
 		job.Id = id
 		job.Status = 1 //在线状态
 		job.Count = 1
+		m["job_count"] = 3
+		m["interval"] = 10
 		code = h.logic.Add(job)
 	} else {
 		bean := inter.(*wx.Job)
@@ -81,11 +85,15 @@ func (h HttpWxHandler) OnlineJob(c app.GContext) {
 		job.Etime = time.Now().Local()
 		job.Count = bean.Count + 1
 		job.Status = 1
+		m["job_count"] = bean.JobCount
+		m["interval"] = bean.Interval
+
 		queryMap := make(map[string]interface{})
 		queryMap[" id = "] = id
 		code = h.logic.Update(job, cols, queryMap)
 	}
-	g.Json(http.StatusOK, code, id)
+	m["id"] = id
+	g.Json(http.StatusOK, code, m)
 	return
 
 }
