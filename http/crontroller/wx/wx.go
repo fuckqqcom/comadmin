@@ -201,10 +201,16 @@ func (h HttpWxHandler) GetArticleList(c app.GContext) {
 		g.Json(http.StatusOK, code, "")
 		return
 	}
-	ps, pn := utils.Pagination(p.Ps, p.Pn, 200)
 
+	if value, exists := g.Get("anonymous"); exists && value.(bool) {
+		p.Ps, p.Pn = 10, 1
+
+	} else {
+		p.Ps, p.Pn = utils.Pagination(p.Ps, p.Pn, 200)
+
+	}
 	//es 倒叙
-	list, count := h.logic.FindOne(p, nil, ps, pn, PtimeDesc)
+	list, count := h.logic.FindOne(p, nil, p.Ps, p.Pn, PtimeDesc)
 	m := make(map[string]interface{})
 	m["count"] = count
 	m["list"] = list

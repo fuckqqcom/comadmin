@@ -78,7 +78,7 @@ func NewRouter(path string) *gin.Engine {
 		weiXin.GET("/getTasks", r.GetTasks)
 
 		//查询数据接口
-		weiXin.POST("/articles", r.GetArticleList)
+		weiXin.POST("/articles", middleware.Anonymous(), r.GetArticleList)
 
 		//更新微信key
 		weiXin.POST("/updateKey", r.UpdateKey)
