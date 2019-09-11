@@ -38,7 +38,7 @@ func (h HttpWxHandler) AddDetail(c app.GContext) {
 	const t = "2006-01-02 15:04:05"
 
 	detail := wx.WeiXinDetail{Id: p.Id, Title: p.Title, Text: p.Text, TextStyle: p.TextStyle, Biz: p.Biz,
-		Ptime: p.Ptime, Author: p.Author, Forbid: 1, Ctime: time.Now().Local(), Mtime: time.Now().Local(), Url: p.Url}
+		Ptime: p.Ptime, Author: p.Author, Forbid: 1, Ctime: time.Now().Local(), Mtime: time.Now().Local(), Url: p.Url, From: p.From}
 	h.logic.Add(detail)
 	g.Json(http.StatusOK, code, "")
 	return
