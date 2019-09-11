@@ -3,6 +3,7 @@ package router
 import (
 	"comadmin/http/crontroller/admin"
 	"comadmin/http/crontroller/wx"
+	"comadmin/http/middleware"
 	"github.com/DeanThompson/ginpprof"
 	"github.com/gin-gonic/gin"
 )
@@ -47,6 +48,7 @@ func NewRouter(path string) *gin.Engine {
 		提交数据
 		*/
 		//提交点赞和阅读量数据接口  readAndThumbCount
+
 		weiXin.POST("/readAndThumbCount", r.ReadAndThumbCount)
 		//详情页入库
 		weiXin.POST("/addDetail", r.AddDetail)
@@ -80,6 +82,9 @@ func NewRouter(path string) *gin.Engine {
 
 		//更新微信key
 		weiXin.POST("/updateKey", r.UpdateKey)
+
+		//获取公号列表.按照用户获取
+		weiXin.GET("/ownWx", middleware.Anonymous(), r.OwnWx)
 
 		weiXin.POST("/download", r.DownLoad)
 

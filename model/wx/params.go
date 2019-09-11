@@ -38,3 +38,8 @@ type BizPdf struct {
 	Biz string `json:"biz"`
 	Ids string `json:"ids"`
 }
+
+//获取当前用户的购买的微信号
+type OwnParams struct {
+	Uid string `json:"uid" binding:"required"`
+}

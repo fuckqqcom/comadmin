@@ -140,6 +140,13 @@ func (d Dao) FindOne(i interface{}, m map[string]interface{}, ps, pn int, orderQ
 	case wx.DownPdf:
 		fmt.Println("download pdf")
 		return nil, nil
+	case wx.WeiXin:
+		type WeiXin struct {
+			Id   int64  `json:"id"`
+			Name string `json:"name"`
+		}
+		w := make([]WeiXin, 0)
+		return d.find(&w, m, ps, pn, orderQuery)
 	default:
 		fmt.Println("update other ...")
 		return nil, e.Errors

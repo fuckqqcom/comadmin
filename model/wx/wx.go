@@ -21,6 +21,7 @@ type WeiXin struct {
 	Mtime    time.Time `json:"mtime" xorm:"updated" ` //最后一次更新时间
 	Forbid   int       `json:"forbid"`                //公号是否被微信官方搞事了
 	Note     string    `json:"note"`                  //被管放禁用后的提示 (生于xxx,卒于xxx)
+	Default  int       `json:"default"`               //默认匿名用户展示
 }
 
 //阅读量和点赞量
