@@ -6,6 +6,8 @@ type Nearly7Day struct {
 	Pn  int
 	Ps  int
 }
+type Nearly3Hour struct {
+}
 
 //提交列表数据
 type AddWxParams struct {

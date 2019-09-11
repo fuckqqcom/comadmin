@@ -9,6 +9,7 @@ import (
 	"github.com/olivere/elastic/v7"
 	"github.com/xormplus/xorm"
 	"log"
+	"time"
 )
 
 type DbHandler interface {
@@ -146,6 +147,15 @@ func (d Dao) FindOne(i interface{}, m map[string]interface{}, ps, pn int, orderQ
 			Name string `json:"name"`
 		}
 		w := make([]WeiXin, 0)
+		return d.find(&w, m, ps, pn, orderQuery)
+	case wx.Nearly3Hour:
+		type WeiXinList struct {
+			Title string    `json:"title"`
+			Url   string    `json:"url"`
+			Biz   string    `json:"biz"`
+			Ptime time.Time `json:"ptime"`
+		}
+		w := make([]WeiXinList, 0)
 		return d.find(&w, m, ps, pn, orderQuery)
 	default:
 		fmt.Println("update other ...")

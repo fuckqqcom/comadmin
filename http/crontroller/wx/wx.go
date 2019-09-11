@@ -334,6 +334,25 @@ func (h HttpWxHandler) Nearly7Day(c app.GContext) {
 	return
 }
 
+func (h HttpWxHandler) Nearly3Hour(c app.GContext) {
+
+	g := app.G{c}
+
+	var p wx.Nearly3Hour
+
+	ps, pn := utils.Pagination(-1, -1, 2000)
+	//w := wx.Nearly7Day{}
+	queryMap := make(map[string]interface{}, 0)
+
+	queryMap["ptime >= "] = utils.Time2Str(time.Now().Add(-time.Hour*3), "2006-01-02 15:04:05")
+	list, count := h.logic.FindOne(p, queryMap, ps, pn, PtimeDesc)
+	m := make(map[string]interface{})
+	m["count"] = count
+	m["list"] = list
+	g.Json(http.StatusOK, e.Success, m)
+	return
+}
+
 //UpdateKey
 func (h HttpWxHandler) UpdateKey(c app.GContext) {
 	g := app.G{c}

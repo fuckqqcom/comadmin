@@ -83,10 +83,11 @@ func NewRouter(path string) *gin.Engine {
 		//更新微信key
 		weiXin.POST("/updateKey", r.UpdateKey)
 
+		weiXin.POST("/download", r.DownLoad)
 		//获取公号列表.按照用户获取
 		weiXin.GET("/ownWx", middleware.Anonymous(), r.OwnWx)
-
-		weiXin.POST("/download", r.DownLoad)
+		//获取最近三小时的url
+		weiXin.GET("/nearly3Hour", middleware.Share(), r.Nearly3Hour)
 
 	}
 	ginpprof.Wrapper(r.Engine)
