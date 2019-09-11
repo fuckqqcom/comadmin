@@ -17,8 +17,8 @@ import (
 //http请求
 
 const (
-	//detail = "http://api.pipenv.com/v1/wx/addDetail"
-	detail = "http://127.0.0.1:1234/v1/wx/addDetail"
+	detail = "http://api.pipenv.com/v1/wx/addDetail"
+	//detail = "http://127.0.0.1:1234/v1/wx/addDetail"
 )
 
 func Detail(i Info) {
