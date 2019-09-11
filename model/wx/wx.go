@@ -3,9 +3,13 @@ package wx
 import "time"
 
 //公号属性
+/**
+查询的时候拿自增主键id当做传过来的id转下 找到对应的biz
+*/
 type WeiXin struct {
+	Id       int64     //自增中间 id
 	MobileId string    `json:"mobile_id"`             //手机id
-	Id       string    `json:"id"`                    //微信id
+	Wid      string    `json:"wid" xorm:"wid"`        //微信id
 	Biz      string    `json:"biz"`                   //公号biz
 	Name     string    `json:"name"`                  //名称
 	Key      string    `json:"key"`                   //微信的key
@@ -21,6 +25,7 @@ type WeiXin struct {
 
 //阅读量和点赞量
 type WeiXinCount struct {
+	Id         int64     //自增主键id
 	Biz        string    `json:"biz"`
 	ArticleId  string    `json:"article_id"`            //文章id
 	ReadCount  int       `json:"read_count"`            //阅读量
@@ -60,8 +65,8 @@ type WeiXinDetail struct {
 
 //文章列表
 type WeiXinList struct {
-	HashId    string    `json:"hash_id"`
-	Id        int64     //文章id
+	Id        int64     //主键id
+	HashId    string    `json:"hash_id"`                     //文章id
 	SourceUrl string    `json:"source_url" `                 //原始url
 	Url       string    `json:"url"  binding:"required" `    //文章url
 	Title     string    `json:"title" binding:"required"   ` //文章标题
