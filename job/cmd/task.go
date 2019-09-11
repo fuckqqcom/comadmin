@@ -53,7 +53,7 @@ func register() error {
 
 	payload := strings.NewReader(string(bytes))
 	header := map[string]string{"Content-Type": "application/json"}
-	r := parse.Request{Url: onlineJob, Interval: 10, Timeout: 100, Body: payload, Header: header, Method: "POST"}
+	r := parse.Request{Url: onlineJob, Interval: 10, Timeout: 5000, Body: payload, Header: header, Method: "POST"}
 	data, err := r.Fetch()
 	//{"code":200,"data":"2dda16efea31ea25df7c5fd57dfd242b","msg":"成功"}
 	type Ret struct {
@@ -95,7 +95,7 @@ func unregister() error {
 
 	payload := strings.NewReader(string(bytes))
 	header := map[string]string{"Content-Type": "application/json"}
-	r := parse.Request{Url: offlineJob, Interval: 10, Timeout: 100, Body: payload, Header: header, Method: "POST"}
+	r := parse.Request{Url: offlineJob, Interval: 10, Timeout: 5000, Body: payload, Header: header, Method: "POST"}
 	_, err = r.Fetch()
 	if err != nil {
 		fmt.Println(err)
@@ -119,7 +119,7 @@ func loadDetailJob() {
 
 	payload := strings.NewReader("{\"num\": " + strconv.Itoa(JobCount) + " }")
 	header := map[string]string{"Content-Type": "application/json"}
-	r := parse.Request{Url: url, Interval: Interval, Timeout: 100, Body: payload, Header: header}
+	r := parse.Request{Url: url, Interval: Interval, Timeout: 5000, Body: payload, Header: header}
 	bytes, err := r.Fetch()
 	if err != nil {
 		fmt.Println(err)
