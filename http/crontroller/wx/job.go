@@ -15,14 +15,15 @@ import (
 
 func (h HttpWxHandler) AddDetail(c app.GContext) {
 	type params struct {
-		Id        string `json:"id"  binding:"required" `         //主键id  ArticleId
-		Title     string `json:"title"  binding:"required" `      //标题
-		Text      string `json:"text"  binding:"required" `       //正文
-		TextStyle string `json:"text_style"  binding:"required" ` //带样式的正文
-		Biz       string `json:"biz"  binding:"required" `        //biz
-		Ptime     string `json:"ptime" binding:"required" `       //发布时间
-		Author    string `json:"author" binding:"required" `      //作者
-		From      string `json:"from"  binding:"required"`
+		Id        string    `json:"id"  binding:"required" `         //主键id  ArticleId
+		Title     string    `json:"title"  binding:"required" `      //标题
+		Text      string    `json:"text"  binding:"required" `       //正文
+		TextStyle string    `json:"text_style"  binding:"required" ` //带样式的正文
+		Biz       string    `json:"biz"  binding:"required" `        //biz
+		Ptime     time.Time `json:"ptime" binding:"required" `       //发布时间
+		Author    string    `json:"author" binding:"required" `      //作者
+		From      string    `json:"from"  binding:"required"`
+		Url       string    `json:"url"  binding:"required"` //url连接
 	}
 
 	g := app.G{c}
@@ -37,7 +38,7 @@ func (h HttpWxHandler) AddDetail(c app.GContext) {
 	const t = "2006-01-02 15:04:05"
 
 	detail := wx.WeiXinDetail{Id: p.Id, Title: p.Title, Text: p.Text, TextStyle: p.TextStyle, Biz: p.Biz,
-		Ptime: utils.Str2Time(t, p.Ptime), Author: p.Author, Forbid: 1, Ctime: time.Now().Local(), Mtime: time.Now().Local()}
+		Ptime: p.Ptime, Author: p.Author, Forbid: 1, Ctime: time.Now().Local(), Mtime: time.Now().Local(), Url: p.Url}
 	h.logic.Add(detail)
 	g.Json(http.StatusOK, code, "")
 	return
