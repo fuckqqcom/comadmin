@@ -78,13 +78,14 @@ func (h HttpWxHandler) OnlineJob(c app.GContext) {
 		job.Count = 1
 		job.Interval = 20
 		job.JobCount = 2
+		job.Etime = time.Now().Local()
 		m["job_count"] = 3
 		m["interval"] = 10
 		code = h.logic.Add(job)
+
 	} else {
 		bean := inter.(*wx.Job)
-		cols := []string{"etime", "status"}
-		job.Etime = time.Now().Local()
+		cols := []string{"status"}
 		job.Status = 1
 		m["job_count"] = bean.JobCount
 		m["interval"] = bean.Interval
@@ -122,7 +123,7 @@ func (h HttpWxHandler) OfflineJob(c app.GContext) {
 	job.Etime = time.Now().Local()
 	job.Status = -1
 	job.Count = bean.Count + 1
-	job.Etime = time.Now()
+	job.Etime = time.Now().Local()
 	queryMap := make(map[string]interface{})
 	queryMap[" id = "] = p.Id
 	code = h.logic.Update(job, cols, queryMap)
