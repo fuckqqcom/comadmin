@@ -76,14 +76,15 @@ func (h HttpWxHandler) OnlineJob(c app.GContext) {
 		job.Id = id
 		job.Status = 1 //在线状态
 		job.Count = 1
+		job.Interval = 20
+		job.JobCount = 2
 		m["job_count"] = 3
 		m["interval"] = 10
 		code = h.logic.Add(job)
 	} else {
 		bean := inter.(*wx.Job)
-		cols := []string{"count", "etime", "status"}
+		cols := []string{"etime", "status"}
 		job.Etime = time.Now().Local()
-		job.Count = bean.Count + 1
 		job.Status = 1
 		m["job_count"] = bean.JobCount
 		m["interval"] = bean.Interval
@@ -113,10 +114,14 @@ func (h HttpWxHandler) OfflineJob(c app.GContext) {
 		return
 	}
 	job := wx.Job{Id: p.Id, Ip: p.Ip}
+	inter := h.logic.Get(&job, []string{" `count` ", "job_count", " `interval` "}, nil)
+	bean := inter.(*wx.Job)
+
 	//这一层在dao层做
-	cols := []string{"etime", "status"}
+	cols := []string{"etime", "status", "count"}
 	job.Etime = time.Now().Local()
 	job.Status = -1
+	job.Count = bean.Count + 1
 	queryMap := make(map[string]interface{})
 	queryMap[" id = "] = p.Id
 	code = h.logic.Update(job, cols, queryMap)

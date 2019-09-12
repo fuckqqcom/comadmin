@@ -20,7 +20,7 @@ const (
 	//detail = "http://127.0.0.1:1234/v1/wx/addDetail"
 )
 
-func Detail(i Info) {
+func Detail(i Info, Interval int) {
 	if i.Url == "" {
 		return
 	}
@@ -29,8 +29,8 @@ func Detail(i Info) {
 		Url:         i.Url,
 		Body:        nil,
 		Retry:       3,
-		Timeout:     6,
-		Interval:    10,
+		Timeout:     5000,
+		Interval:    Interval,
 		Method:      "GET",
 		Header:      nil,
 		VerifyProxy: false,
@@ -83,8 +83,8 @@ func uploadData(params Params) {
 		Url:         detail,
 		Body:        payload,
 		Retry:       3,
-		Timeout:     10,
-		Interval:    1,
+		Timeout:     5000,
+		Interval:    20,
 		Method:      "POST",
 		Header:      header,
 		VerifyProxy: false,

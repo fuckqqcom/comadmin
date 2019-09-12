@@ -4,6 +4,7 @@ import (
 	"comadmin/job/parse"
 	"comadmin/tools/utils"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -22,10 +23,11 @@ var (
 
 func main() {
 	if register() == nil {
-		loadDetailJob()
-		unregister()
+		fmt.Println(Interval, JobCount)
+		if loadDetailJob() == nil {
+			unregister()
+		}
 	}
-
 }
 
 const (
@@ -104,7 +106,7 @@ func unregister() error {
 	return nil
 }
 
-func loadDetailJob() {
+func loadDetailJob() error {
 
 	type RetData struct {
 		Code int `json:"code"`
@@ -123,18 +125,19 @@ func loadDetailJob() {
 	bytes, err := r.Fetch()
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 	err = json.Unmarshal(bytes, &ret)
 
 	if ret.Code == 200 {
 		if ret.Data.Count == 0 {
 			log.Printf("暂时没有任务")
+			return errors.New("暂时没有任务")
 		}
 		for _, v := range ret.Data.List {
 
 			parse.Detail(v, Interval)
 		}
 	}
-
+	return nil
 }
