@@ -23,7 +23,6 @@ var (
 
 func main() {
 	if register() == nil {
-		fmt.Println(Interval, JobCount)
 		if loadDetailJob() == nil {
 			unregister()
 		}
