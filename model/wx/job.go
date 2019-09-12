@@ -13,5 +13,5 @@ type Job struct {
 	JobCount int       `json:"job_count" xorm:"int(11) not null default 2"` //任务数量
 	Interval int       `json:"interval" xorm:"int(11) not null default 20"` //时间间隔 ，默认值是 1分钟 配置的
 	Status   int       `json:"status"`                                      //是否在线运行
-	Etime    time.Time `json:"etime" xorm:"updated"`                        //运行结束时间
+	Etime    time.Time `json:"etime"`                                       //运行结束时间
 }

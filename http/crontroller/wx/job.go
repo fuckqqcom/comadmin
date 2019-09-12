@@ -122,6 +122,7 @@ func (h HttpWxHandler) OfflineJob(c app.GContext) {
 	job.Etime = time.Now().Local()
 	job.Status = -1
 	job.Count = bean.Count + 1
+	job.Etime = time.Now()
 	queryMap := make(map[string]interface{})
 	queryMap[" id = "] = p.Id
 	code = h.logic.Update(job, cols, queryMap)
